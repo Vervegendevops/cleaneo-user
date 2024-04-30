@@ -1,23 +1,65 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/wash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class VendorDetailsPage extends StatefulWidget {
-  const VendorDetailsPage({Key? key}) : super(key: key);
+  String vendorID;
+  VendorDetailsPage({Key? key, required this.vendorID}) : super(key: key);
 
   @override
   State<VendorDetailsPage> createState() => _VendorDetailsPageState();
 }
 
+Map<String, dynamic> vendorListDynamic = {};
+
 class _VendorDetailsPageState extends State<VendorDetailsPage> {
+  Future<Object> fetchResponse() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/vendorDetails/${widget.vendorID}';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // Cast each item in the list to Map<String, dynamic>
+        setState(() {
+          vendorListDynamic = jsonDecode(response.body);
+        });
+
+        print(vendorListDynamic);
+        return response.body;
+      } else {
+        // If the response status code is not 200, throw an exception or handle
+        // the error accordingly.
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      print('Error fetching data: $e');
+      return []; // Return an empty list in case of an error.
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchResponse();
+  }
+
   var ownerName = "Mr. John Doe";
   var rating = 4.5;
   var address = "123 Main Street, Anytown, USA 12345";
   var gstNo = "22AAAA0000A1Z5";
   var contactNo = "+91-9876543210";
   var email = "freshbubbles1@gmail.com";
-
+  bool SI1 = false;
+  bool SI2 = false;
+  bool SI3 = false;
+  bool SI4 = false;
   @override
   Widget build(BuildContext context) {
     var mQuery = MediaQuery.of(context);
@@ -41,10 +83,10 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return ChooseVendorPage();
-                      }));
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) {
+                      //   return ChooseVendorPage();
+                      // }));
                     },
                     child: Icon(
                       Icons.arrow_back,
@@ -137,10 +179,22 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                           width: mQuery.size.width * 0.12,
                                           height: mQuery.size.height * 0.1,
                                           decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      "https://t3.ftcdn.net/jpg/04/27/57/28/360_F_427572855_RhQYKzH4mAzkzIYhnGngBA4h4x5kUwnm.jpg"))),
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(
+                                                SI1 == false
+                                                    ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/3.jpg"
+                                                    : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/3.png",
+                                              ),
+                                              onError: (exception, stackTrace) {
+                                                // If loading imageUrl1 fails, fallback to imageUrl2
+                                                setState(() {
+                                                  SI1 = true;
+                                                });
+                                              },
+                                            ),
+                                          ),
                                         ),
                                         SizedBox(
                                           width: mQuery.size.width * 0.03,
@@ -153,7 +207,10 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "Fresh Bubbles Laundry",
+                                                vendorListDynamic['name'] ==
+                                                        null
+                                                    ? 'Loading'
+                                                    : vendorListDynamic['name'],
                                                 style: TextStyle(
                                                     fontFamily: 'SatoshiBold',
                                                     fontSize:
@@ -209,7 +266,13 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                         0.02,
                                                   ),
                                                   Text(
-                                                    "$rating",
+                                                    vendorListDynamic[
+                                                                'rating'] !=
+                                                            null
+                                                        ? vendorListDynamic[
+                                                                'rating']
+                                                            .toString()
+                                                        : 'No reviews yet',
                                                     style: TextStyle(
                                                         fontFamily:
                                                             'SatoshiMedium'),
@@ -344,11 +407,11 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return WashPage();
-                                          }));
+                                          // Navigator.push(context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) {
+                                          //   return WashPage();
+                                          // }));
                                         },
                                         child: Row(
                                           mainAxisAlignment:
@@ -384,7 +447,10 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                     "Wash",
                                                     style: TextStyle(
                                                         color:
-                                                            Color(0xff28b2fe)),
+                                                            Color(0xff28b2fe),
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.015),
                                                   )
                                                 ],
                                               ),
@@ -419,7 +485,10 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                     "Iron",
                                                     style: TextStyle(
                                                         color:
-                                                            Color(0xff5da17e)),
+                                                            Color(0xff5da17e),
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.015),
                                                   )
                                                 ],
                                               ),
@@ -461,7 +530,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                             Color(0xffc44970),
                                                         fontSize:
                                                             mQuery.size.height *
-                                                                0.017),
+                                                                0.015),
                                                   )
                                                 ],
                                               ),
@@ -496,7 +565,10 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                     "Premium",
                                                     style: TextStyle(
                                                         color:
-                                                            Color(0xffdd874e)),
+                                                            Color(0xffdd874e),
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.015),
                                                   )
                                                 ],
                                               ),
@@ -526,11 +598,23 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                               width: mQuery.size.width * 0.3,
                                               height: mQuery.size.height * 0.2,
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  image: DecorationImage(
-                                                      image: NetworkImage(
-                                                          "https://www.lg.com/global/images/business/commercial-laundry/WM-Commercial-SuperCategory-04-2-Laundromat-D.jpg"))),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    SI1 == false
+                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
+                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
+                                                  ),
+                                                  onError:
+                                                      (exception, stackTrace) {
+                                                    // If loading imageUrl1 fails, fallback to imageUrl2
+                                                    setState(() {
+                                                      SI1 = true;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
                                             ),
                                             SizedBox(
                                                 width:
@@ -539,11 +623,23 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                               width: mQuery.size.width * 0.3,
                                               height: mQuery.size.height * 0.2,
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  image: DecorationImage(
-                                                      image: NetworkImage(
-                                                          "https://cdn.create.vista.com/api/media/small/668757522/stock-photo-full-length-young-asian-woman-sitting-washing-machine-public-laundry"))),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    SI1 == false
+                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
+                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
+                                                  ),
+                                                  onError:
+                                                      (exception, stackTrace) {
+                                                    // If loading imageUrl1 fails, fallback to imageUrl2
+                                                    setState(() {
+                                                      SI1 = true;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
                                             ),
                                             SizedBox(
                                                 width:
@@ -552,11 +648,23 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                               width: mQuery.size.width * 0.3,
                                               height: mQuery.size.height * 0.2,
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  image: DecorationImage(
-                                                      image: NetworkImage(
-                                                          "https://content.jdmagicbox.com/comp/bangalore/u3/080pxx80.xx80.181217191332.j6u3/catalogue/clothcare-premium-laundry-service-mangammanapalya-bommanahalli-bangalore-laundry-services-94q7r4hbv8.jpg"))),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    SI1 == false
+                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/3.jpg"
+                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/3.png",
+                                                  ),
+                                                  onError:
+                                                      (exception, stackTrace) {
+                                                    // If loading imageUrl1 fails, fallback to imageUrl2
+                                                    setState(() {
+                                                      SI1 = true;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
                                             ),
                                             SizedBox(
                                                 width:
@@ -565,11 +673,23 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                               width: mQuery.size.width * 0.3,
                                               height: mQuery.size.height * 0.2,
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  image: DecorationImage(
-                                                      image: NetworkImage(
-                                                          "https://c8.alamy.com/comp/2BBM3G6/pretty-young-woman-putting-getting-some-dirty-clothes-into-a-washing-machine-in-a-laundry-laundry-cleaning-2BBM3G6.jpg"))),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    SI1 == false
+                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/4.jpg"
+                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/4.png",
+                                                  ),
+                                                  onError:
+                                                      (exception, stackTrace) {
+                                                    // If loading imageUrl1 fails, fallback to imageUrl2
+                                                    setState(() {
+                                                      SI1 = true;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
                                             ),
                                             SizedBox(
                                               height: mQuery.size.height * 0.03,

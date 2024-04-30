@@ -1,3 +1,6 @@
+import 'dart:convert';
+import "package:http/http.dart" as http;
+import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,6 +16,76 @@ class CustomerServicePage extends StatefulWidget {
 }
 
 class _CustomerServicePageState extends State<CustomerServicePage> {
+  Future<void> queryManagement() async {
+    // Define the API endpoint
+    String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/query';
+
+    // Create the request body
+    Map<String, String> requestBody = {
+      'sendor_ID': UserData.read('ID'),
+      'name': UserData.read('name'),
+      'email': UserData.read('email'),
+      'phone': UserData.read('phone'),
+      'type': 'User',
+      'description': _feedback,
+    };
+
+    // Convert the request body to JSON format
+    String jsonBody = jsonEncode(requestBody);
+
+    try {
+      // Make the POST request
+      http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+
+      // Check if the request was successful (status code 200)
+      if (response.statusCode == 200) {
+        print('Sign up successful');
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return MapPage();
+        // }));
+        // You can handle the response here if needed
+
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              title: Text('Thank You!'),
+              content: Text('We will contact you soon.'),
+              actions: <Widget>[
+                ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff29b2fe))),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _feedback = '';
+                      });
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: Colors.white),
+                    ))
+              ],
+            );
+          },
+        );
+      } else {
+        // Handle error if the request was not successful
+        print('Failed to sign up. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request
+      print('Error signing up: $e');
+    }
+  }
+
   String _feedback = '';
   int maxWordLimit = 140;
   bool _showEmailOptions = false;
@@ -162,40 +235,55 @@ class _CustomerServicePageState extends State<CustomerServicePage> {
                         SizedBox(height: mQuery.size.height * 0.1),
                         ElevatedButton(
                           onPressed: () {
+                            // print(UserID);
+                            print(UserData.read('ID'));
+                            print(UserData.read('name'));
+                            print(UserData.read('phone'));
+                            print(UserData.read('email'));
+                            print('User');
+                            print(_feedback);
+                            queryManagement();
+                            // sendor_ID = UserData.read('ID')
+                            // name = UserData.read('name')
+                            // email = UserData.read('email')
+                            // phone = UserData.read('phone')
+                            // type = User
+                            // description = _feedback
+
                             // Handle submission
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  backgroundColor: Colors.white,
-                                  surfaceTintColor: Colors.white,
-                                  title: Text('Login Required'),
-                                  content: Text('Please log in to continue.'),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStatePropertyAll(
-                                                    Color(0xff29b2fe))),
-                                        onPressed: () {
-                                          setState(() {
-                                            authentication.write(
-                                                'Authentication', '');
-                                          });
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return LoginPage();
-                                          }));
-                                        },
-                                        child: Text(
-                                          'Login',
-                                          style: TextStyle(color: Colors.white),
-                                        ))
-                                  ],
-                                );
-                              },
-                            );
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (context) {
+                            //     return AlertDialog(
+                            //       backgroundColor: Colors.white,
+                            //       surfaceTintColor: Colors.white,
+                            //       title: Text('Login Required'),
+                            //       content: Text('Please log in to continue.'),
+                            //       actions: <Widget>[
+                            //         ElevatedButton(
+                            //             style: ButtonStyle(
+                            //                 backgroundColor:
+                            //                     MaterialStatePropertyAll(
+                            //                         Color(0xff29b2fe))),
+                            //             onPressed: () {
+                            //               setState(() {
+                            //                 authentication.write(
+                            //                     'Authentication', '');
+                            //               });
+                            //               Navigator.push(context,
+                            //                   MaterialPageRoute(
+                            //                       builder: (context) {
+                            //                 return LoginPage();
+                            //               }));
+                            //             },
+                            //             child: Text(
+                            //               'Login',
+                            //               style: TextStyle(color: Colors.white),
+                            //             ))
+                            //       ],
+                            //     );
+                            //   },
+                            // );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xff29b2fe),
@@ -350,6 +438,8 @@ class FeedbackContainer extends StatelessWidget {
           child: TextField(
             cursorColor: Colors.grey,
             maxLines: null,
+            // maxLength: 140,
+
             keyboardType: TextInputType.multiline,
             onChanged: onChanged,
             decoration: InputDecoration.collapsed(

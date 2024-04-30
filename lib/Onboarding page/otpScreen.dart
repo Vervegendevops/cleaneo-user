@@ -53,7 +53,7 @@ class _OTPPageState extends State<OTPPage> {
 
   Future<void> signUp() async {
     // Define the API endpoint
-    String apiUrl = 'https://shrayansh.in/CleaneoUser/api/signup';
+    String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/signup';
 
     // Create the request body
     Map<String, String> requestBody = {
@@ -273,6 +273,8 @@ class _OTPPageState extends State<OTPPage> {
                               UserData.write('email', userList['email']);
                               UserData.write('phone', userList['phone']);
                               UserData.write('Wallet', userList['Wallet']);
+                              UserData.write('ID', userList['ID']);
+                              print(UserData.read('ID'));
                               UserData.write(
                                   'total_order', userList['total_order']);
 

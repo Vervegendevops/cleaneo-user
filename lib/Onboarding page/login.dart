@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Object> fetchResponse(String phoneNumber) async {
-    final url = 'https://shrayansh.in/CleaneoUser/api/signedUp/$phoneNumber';
+    final url = 'https://drycleaneo.com/CleaneoUser/api/signedUp/$phoneNumber';
 
     try {
       final response = await http.get(Uri.parse(url));

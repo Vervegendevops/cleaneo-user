@@ -35,10 +35,10 @@ class _HomePageState extends State<HomePage> {
 
   TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> gridItems = [
+    {"image": "assets/images/Dry Clean.png", "text": "Dry Clean"},
     {"image": "assets/images/Wash.png", "text": "Wash"},
     {"image": "assets/images/Wash & Iron.png", "text": "Wash & Iron"},
     {"image": "assets/images/Steam Iron.png", "text": "Stream Iron"},
-    {"image": "assets/images/Dry Clean.png", "text": "Dry Clean"},
     {"image": "assets/images/Premium Wash.png", "text": "Premium Wash"},
     {"image": "assets/images/Shoe & Bag Care.png", "text": "Shoe & Bag Care"},
   ];
@@ -182,40 +182,6 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildPage(int index) {
     var mQuery = MediaQuery.of(context);
-
-    List<Map<String, dynamic>> sortedGridItems = List.from(gridItems);
-    sortedGridItems.sort((a, b) => a['text'].compareTo(b['text']));
-
-    List<Map<String, dynamic>> filteredAndSortedGridItems = [];
-    String searchText = searchController.text.toLowerCase();
-
-    sortedGridItems.sort((a, b) {
-      if (a['text'] == 'Wash') {
-        return -1;
-      } else if (b['text'] == 'Wash') {
-        return 1;
-      } else if (a['text'] == 'Wash & Iron') {
-        return -1;
-      } else if (b['text'] == 'Wash & Iron') {
-        return 1;
-      } else if (a['text'] == 'Stream Iron' || a['text'] == 'Dry Clean') {
-        return -1;
-      } else if (b['text'] == 'Stream Iron' || b['text'] == 'Dry Clean') {
-        return 1;
-      } else {
-        return a['text'].compareTo(b['text']);
-      }
-    });
-
-    if (searchText.isEmpty) {
-      filteredAndSortedGridItems = List.from(sortedGridItems);
-    } else {
-      filteredAndSortedGridItems = sortedGridItems.where((item) {
-        String itemName = item['text'].toLowerCase();
-        return itemName.contains(searchText);
-      }).toList();
-    }
-
     return Scaffold(
       body: Container(
         color: const Color(0xfff3fbff),
@@ -405,22 +371,16 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSpacing: 20,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      var item = filteredAndSortedGridItems[index];
+                      var item = gridItems[index];
                       return GestureDetector(
                         onTap: () {
-                          if (item['text'] == 'Dry Clean') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DryCleanPage()),
-                            );
-                          } else if (item['text'] == 'Wash') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChooseVendorPage()),
-                            );
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChooseVendorPage(
+                                      service: item['text'],
+                                    )),
+                          );
                         },
                         child: Container(
                           margin:
@@ -461,7 +421,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     },
-                    itemCount: filteredAndSortedGridItems.length,
+                    itemCount: gridItems.length,
                   ),
                   SizedBox(height: mQuery.size.height * 0.016),
                   CarouselSlider(
@@ -676,7 +636,9 @@ class _HomePageState extends State<HomePage> {
                                           Navigator.push(context,
                                               MaterialPageRoute(
                                                   builder: (context) {
-                                            return VendorDetailsPage();
+                                            return VendorDetailsPage(
+                                              vendorID: '1',
+                                            );
                                           }));
                                         },
                                         child: Container(

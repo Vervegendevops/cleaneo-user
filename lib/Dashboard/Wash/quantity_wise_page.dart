@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuantityWisePage extends StatefulWidget {
@@ -14,6 +15,8 @@ class QuantityWisePage extends StatefulWidget {
 }
 
 class _QuantityWisePageState extends State<QuantityWisePage> {
+  // Get current date
+
   TextEditingController searchController = TextEditingController();
   TextEditingController extranoteController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -124,9 +127,31 @@ class _QuantityWisePageState extends State<QuantityWisePage> {
 
   List<int> kgValues = List.filled(13, 0);
   List<bool> isSelected = [false, false, false];
+  String formattedTime = DateFormat('HH:mm:ss').format(DateTime.now());
+
+  // Extract the hour component from the current time
+  int currentHour = DateTime.now().hour;
+  // Format date
+
+  String formattedToday = DateFormat('d MMMM').format(DateTime.now());
+  String formattedTomorrow =
+      DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 1)));
+  String formattedDayAfterTomorrow =
+      DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 2)));
 
   @override
   Widget build(BuildContext context) {
+    if (currentHour >= 18 && currentHour < 20) {
+      formattedToday =
+          DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 1)));
+      formattedTomorrow =
+          DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 2)));
+      formattedDayAfterTomorrow =
+          DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 3)));
+      // Apply condition for this time range
+    }
+    print(formattedTime);
+    print(formattedToday);
     var mQuery = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -560,7 +585,13 @@ class _QuantityWisePageState extends State<QuantityWisePage> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         var mQuery = MediaQuery.of(context);
-        List<String> dates = ["25 June", "26 June", "27 June"];
+        List<String> dates = [
+          formattedToday,
+          formattedTomorrow,
+          formattedDayAfterTomorrow
+        ];
+        List<String> dates3 = [];
+        // dates3.add()
         List<String> times = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
         List<String> dates2 = ["26 June", "28 June", "29 June"];

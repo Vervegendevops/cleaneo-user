@@ -1,11 +1,26 @@
+import 'dart:convert';
+import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/byweight_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/quantity_wise_page.dart';
 import 'package:cleaneo_user/pages/dryclean_page.dart';
 import 'package:flutter/material.dart';
 
+int selectedServiceIndex = 0;
+
+List<String> serviceList = [
+  "Wash",
+  "Wash and Iron",
+  "Dry Clean",
+  "Wash and Steam",
+  "Steam Iron",
+  "Shoe and Bag Care"
+];
+
 class WashPage extends StatefulWidget {
-  const WashPage({Key? key}) : super(key: key);
+  final String id;
+  const WashPage({Key? key, required this.id});
 
   @override
   State<WashPage> createState() => _WashPageState();
@@ -13,13 +28,15 @@ class WashPage extends StatefulWidget {
 
 class _WashPageState extends State<WashPage>
     with SingleTickerProviderStateMixin {
+  List<String> keysList = [];
+  int length = 0;
   late TabController _tabController;
   bool _isDropdownOpen = false;
-  int _selectedRowIndex = -1;
 
   @override
   void initState() {
     super.initState();
+    fetchServices(widget.id);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -27,6 +44,54 @@ class _WashPageState extends State<WashPage>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void fetchServices(String id) {
+    // Make API call to fetch services based on id
+    String apiUrl =
+        'https://drycleaneo.com/CleaneoUser/api/service_details/$id';
+    http.get(Uri.parse(apiUrl)).then((response) {
+      if (response.statusCode == 200) {
+        print("api calling");
+        // Parse response and update services list
+        setState(() {
+          Map<String, dynamic> data = json.decode(response.body);
+          // Initialize a list to store the names of keys
+
+          print(data);
+
+          // Iterate over the keys starting from index 1
+          data.forEach((key, value) {
+            if (value != "[]" &&
+                key != "ID" &&
+                key != "created_at" &&
+                key != "c_wash" &&
+                key != "c_wash_iron" &&
+                key != "c_dry_clean" &&
+                key != "c_wash_steam" &&
+                key != "c_steam_iron" &&
+                key != "c_shoe_bag_care" &&
+                key != "updated_at" &&
+                key != "laundry_on_kg") {
+              setState(() {
+                keysList.add(key);
+              });
+              length = keysList.length;
+            }
+          });
+
+          // Now, keysList contains the names of keys with non-null values
+          print(keysList);
+          print(length);
+        });
+      } else {
+        // Handle non-200 response status
+        print('Request failed with status: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // Handle error
+      print('Error fetching services: $error');
+    });
   }
 
   @override
@@ -57,37 +122,37 @@ class _WashPageState extends State<WashPage>
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return ChooseVendorPage();
-                                }));
+                                // Navigator.push(context,
+                                //     MaterialPageRoute(builder: (context) {
+                                //   return ChooseVendorPage();
+                                // }));
                               },
                               child:
                                   Icon(Icons.arrow_back, color: Colors.white),
                             ),
                             SizedBox(width: mQuery.size.width * 0.045),
-                            Row(
-                              children: [
-                                Text(
-                                  "Wash",
-                                  style: TextStyle(
-                                      fontSize: mQuery.size.height * 0.027,
-                                      color: Colors.white,
-                                      fontFamily: 'SatoshiBold'),
-                                ),
-                                SizedBox(
-                                  width: mQuery.size.width * 0.02,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _isDropdownOpen = !_isDropdownOpen;
-                                    });
-                                  },
-                                  child: Icon(Icons.arrow_drop_down,
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isDropdownOpen = !_isDropdownOpen;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    serviceList[selectedServiceIndex],
+                                    style: TextStyle(
+                                        fontSize: mQuery.size.height * 0.027,
+                                        color: Colors.white,
+                                        fontFamily: 'SatoshiBold'),
+                                  ),
+                                  SizedBox(
+                                    width: mQuery.size.width * 0.02,
+                                  ),
+                                  Icon(Icons.arrow_drop_down,
                                       color: Colors.white),
-                                ),
-                              ],
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -144,8 +209,7 @@ class _WashPageState extends State<WashPage>
                   });
                 },
                 child: Container(
-                  height: mQuery.size.height * 0.24,
-                  width: mQuery.size.width * 0.48,
+                  width: mQuery.size.width * 0.6,
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
@@ -166,15 +230,24 @@ class _WashPageState extends State<WashPage>
                         SizedBox(
                           height: mQuery.size.height * 0.001,
                         ),
-                        _buildDropdownRow("Wash & Iron", 0),
-                        SizedBox(height: mQuery.size.height * 0.001),
-                        _buildDropdownRow("Stream Iron", 1),
-                        SizedBox(height: mQuery.size.height * 0.001),
-                        _buildDropdownRow("Dry Clean", 2),
-                        SizedBox(height: mQuery.size.height * 0.001),
-                        _buildDropdownRow("Premium", 3),
-                        SizedBox(height: mQuery.size.height * 0.001),
-                        _buildDropdownRow("Shoe & Bag Care", 4),
+                        if (length == 1)
+                          for (int i = 0; i < length; i++)
+                            _buildDropdownRow(serviceList[i], i),
+                        if (length == 2)
+                          for (int i = 0; i < length; i++)
+                            _buildDropdownRow(serviceList[i], i),
+                        if (length == 3)
+                          for (int i = 0; i < length; i++)
+                            _buildDropdownRow(serviceList[i], i),
+                        if (length == 4)
+                          for (int i = 0; i < length; i++)
+                            _buildDropdownRow(serviceList[i], i),
+                        if (length == 5)
+                          for (int i = 0; i < length; i++)
+                            _buildDropdownRow(serviceList[i], i),
+                        if (length == 6)
+                          for (int i = 0; i < length; i++)
+                            _buildDropdownRow(serviceList[i], i)
                       ],
                     ),
                   ),
@@ -191,19 +264,15 @@ class _WashPageState extends State<WashPage>
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedRowIndex = index;
+          selectedServiceIndex = index;
           _isDropdownOpen = false;
         });
         if (index == 2) {
-          // If "Dry Clean" is tapped
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return DryCleanPage(); // Navigate to DrycleanPage
-          }));
+          setState(() {});
         }
       },
       child: Container(
-        color:
-            _selectedRowIndex == index ? Color(0xffd4f0ff) : Colors.transparent,
+        color: Colors.transparent,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: mQuery.size.height * 0.008),
           child: Row(
