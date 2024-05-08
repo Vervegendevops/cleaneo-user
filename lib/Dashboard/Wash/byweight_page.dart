@@ -439,59 +439,59 @@ class _ByWeightPageState extends State<ByWeightPage> {
             SizedBox(
               height: mQuery.size.height * 0.033,
             ),
-            GestureDetector(
-              onTap: () {
-                _openBottomSheet(context);
-              },
-              child: Container(
-                width: double.infinity,
-                height: mQuery.size.height * 0.08,
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                    color: Color(0xff29b2fe),
-                    borderRadius: BorderRadius.circular(6)),
-                child: Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: mQuery.size.height * 0.012,
-                        ),
-                        Text(
-                          "$noCloths ITEMS",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'SatoshiMedium',
-                            fontSize: mQuery.size.height * 0.0195,
-                          ),
-                        ),
-                        Text("₹ 1,500 plus taxes",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'SatoshiMedium',
-                              fontSize: mQuery.size.height * 0.0195,
-                            ))
-                      ],
-                    ),
-                    Expanded(child: SizedBox()),
-                    Text("Proceed",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: mQuery.size.height * 0.024,
-                          fontFamily: 'SatoshiMedium',
-                        )),
-                    SizedBox(
-                      width: mQuery.size.width * 0.02,
-                    ),
-                    Icon(
-                      Icons.arrow_right,
-                      color: Colors.white,
-                    )
-                  ],
-                ),
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     _openBottomSheet(context);
+            //   },
+            //   child: Container(
+            //     width: double.infinity,
+            //     height: mQuery.size.height * 0.08,
+            //     padding: EdgeInsets.symmetric(horizontal: 16),
+            //     decoration: BoxDecoration(
+            //         color: Color(0xff29b2fe),
+            //         borderRadius: BorderRadius.circular(6)),
+            //     child: Row(
+            //       children: [
+            //         Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             SizedBox(
+            //               height: mQuery.size.height * 0.012,
+            //             ),
+            //             Text(
+            //               "$noCloths ITEMS",
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontFamily: 'SatoshiMedium',
+            //                 fontSize: mQuery.size.height * 0.0195,
+            //               ),
+            //             ),
+            //             Text("₹ 1,500 plus taxes",
+            //                 style: TextStyle(
+            //                   color: Colors.white,
+            //                   fontFamily: 'SatoshiMedium',
+            //                   fontSize: mQuery.size.height * 0.0195,
+            //                 ))
+            //           ],
+            //         ),
+            //         Expanded(child: SizedBox()),
+            //         Text("Proceed",
+            //             style: TextStyle(
+            //               color: Colors.white,
+            //               fontSize: mQuery.size.height * 0.024,
+            //               fontFamily: 'SatoshiMedium',
+            //             )),
+            //         SizedBox(
+            //           width: mQuery.size.width * 0.02,
+            //         ),
+            //         Icon(
+            //           Icons.arrow_right,
+            //           color: Colors.white,
+            //         )
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
-import 'package:cleaneo_user/Dashboard/Wash/wash_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class VendorDetailsPage extends StatefulWidget {
   String vendorID;
+
   VendorDetailsPage({Key? key, required this.vendorID}) : super(key: key);
 
   @override
@@ -14,25 +12,32 @@ class VendorDetailsPage extends StatefulWidget {
 }
 
 Map<String, dynamic> vendorListDynamic = {};
+List<String> keysList = [];
+int length = 0;
 
 class _VendorDetailsPageState extends State<VendorDetailsPage> {
+  List<String> selectedServiceListMain = [];
   Future<Object> fetchResponse() async {
     final url =
         'https://drycleaneo.com/CleaneoUser/api/vendorDetails/${widget.vendorID}';
 
     try {
       final response = await http.get(Uri.parse(url));
-
       if (response.statusCode == 200) {
         // Cast each item in the list to Map<String, dynamic>
         setState(() {
-          vendorListDynamic = jsonDecode(response.body);
+          Map<String, dynamic> data = json.decode(response.body);
+          String selectedServiceString = data['selectedService'];
+          // Remove brackets and split the string to get individual services
+          List<String> selectedServiceList = selectedServiceString
+              .substring(1, selectedServiceString.length - 1) // Remove brackets
+              .split(', '); // Split by comma and space
+          print(selectedServiceList);
+          selectedServiceListMain = selectedServiceList;
         });
 
-        print(vendorListDynamic);
         return response.body;
       } else {
-        // If the response status code is not 200, throw an exception or handle
         // the error accordingly.
         throw Exception('Failed to fetch data: ${response.statusCode}');
       }
@@ -41,6 +46,55 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
       print('Error fetching data: $e');
       return []; // Return an empty list in case of an error.
     }
+  }
+
+// New
+  void fetchServices(String id) {
+    // Make API call to fetch services based on id
+    String apiUrl =
+        'https://drycleaneo.com/CleaneoUser/api/service_details/$id';
+    http.get(Uri.parse(apiUrl)).then((response) {
+      if (response.statusCode == 200) {
+        print("api calling");
+        // Parse response and update services list
+        setState(() {
+          Map<String, dynamic> data = json.decode(response.body);
+          // Initialize a list to store the names of keys
+
+          print(data);
+
+          // Iterate over the keys starting from index 1
+          data.forEach((key, value) {
+            if (value != "[]" &&
+                key != "ID" &&
+                key != "created_at" &&
+                key != "c_wash" &&
+                key != "c_wash_iron" &&
+                key != "c_dry_clean" &&
+                key != "c_wash_steam" &&
+                key != "c_steam_iron" &&
+                key != "c_shoe_bag_care" &&
+                key != "updated_at" &&
+                key != "laundry_on_kg") {
+              setState(() {
+                keysList.add(key);
+              });
+              length = keysList.length;
+            }
+          });
+
+          // Now, keysList contains the names of keys with non-null values
+          print(keysList);
+          print(length);
+        });
+      } else {
+        // Handle non-200 response status
+        print('Request failed with status: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      // Handle error
+      print('Error fetching services: $error');
+    });
   }
 
   @override
@@ -63,6 +117,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
   @override
   Widget build(BuildContext context) {
     var mQuery = MediaQuery.of(context);
+    var selectedServiceList;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -405,178 +460,39 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                       SizedBox(
                                         height: mQuery.size.height * 0.02,
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          // Navigator.push(context,
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) {
-                                          //   return WashPage();
-                                          // }));
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              width: mQuery.size.width * 0.17,
-                                              height: mQuery.size.width * 0.16,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.5),
-                                                        spreadRadius: 0,
-                                                        blurRadius: 7,
-                                                        offset: Offset(0, 0))
-                                                  ]),
-                                              child: Column(
-                                                children: [
-                                                  SizedBox(
-                                                    height: mQuery.size.height *
-                                                        0.008,
-                                                  ),
-                                                  Image.asset(
-                                                    "assets/images/vendor Detail Images/hand-washing.png",
-                                                    width: mQuery.size.width *
-                                                        0.08,
-                                                  ),
-                                                  Text(
-                                                    "Wash",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xff28b2fe),
-                                                        fontSize:
-                                                            mQuery.size.height *
-                                                                0.015),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: mQuery.size.width * 0.17,
-                                              height: mQuery.size.width * 0.16,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.5),
-                                                        spreadRadius: 0,
-                                                        blurRadius: 7,
-                                                        offset: Offset(0, 0))
-                                                  ]),
-                                              child: Column(
-                                                children: [
-                                                  SizedBox(
-                                                    height: mQuery.size.height *
-                                                        0.008,
-                                                  ),
-                                                  Image.asset(
-                                                    "assets/images/vendor Detail Images/iron.png",
-                                                    width: mQuery.size.width *
-                                                        0.08,
-                                                  ),
-                                                  Text(
-                                                    "Iron",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xff5da17e),
-                                                        fontSize:
-                                                            mQuery.size.height *
-                                                                0.015),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: mQuery.size.width * 0.17,
-                                              height: mQuery.size.width * 0.16,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.5),
-                                                        spreadRadius: 0,
-                                                        blurRadius: 7,
-                                                        offset: Offset(0, 0))
-                                                  ]),
-                                              child: Column(
-                                                children: [
-                                                  SizedBox(
-                                                    height: mQuery.size.height *
-                                                        0.009,
-                                                  ),
-                                                  Image.asset(
-                                                    "assets/images/vendor Detail Images/premium1.png",
-                                                    width: mQuery.size.width *
-                                                        0.07,
-                                                  ),
-                                                  SizedBox(
-                                                    height: mQuery.size.height *
-                                                        0.004,
-                                                  ),
-                                                  Text(
-                                                    "Dry Clean",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xffc44970),
-                                                        fontSize:
-                                                            mQuery.size.height *
-                                                                0.015),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: mQuery.size.width * 0.17,
-                                              height: mQuery.size.width * 0.16,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.5),
-                                                        spreadRadius: 0,
-                                                        blurRadius: 7,
-                                                        offset: Offset(0, 0))
-                                                  ]),
-                                              child: Column(
-                                                children: [
-                                                  SizedBox(
-                                                    height: mQuery.size.height *
-                                                        0.008,
-                                                  ),
-                                                  Image.asset(
-                                                    "assets/images/vendor Detail Images/bathtub.png",
-                                                    width: mQuery.size.width *
-                                                        0.08,
-                                                  ),
-                                                  Text(
-                                                    "Premium",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xffdd874e),
-                                                        fontSize:
-                                                            mQuery.size.height *
-                                                                0.015),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                                      //Ankit BOSS
+                                      Text(selectedServiceListMain.isNotEmpty
+                                          ? selectedServiceListMain.join(", ")
+                                          : "No services available"),
 
+                                      // FutureBuilder(
+                                      //   future: fetchResponse(),
+                                      //   builder: (context, snapshot) {
+                                      //     if (snapshot.connectionState ==
+                                      //         ConnectionState.waiting) {
+                                      //       return CircularProgressIndicator();
+                                      //     } else if (snapshot.hasError) {
+                                      //       return Text("Error");
+                                      //     } else {
+                                      //       List<dynamic> responseData =
+                                      //           snapshot.data as List<dynamic>;
+                                      //       List<String> selectedServiceList =
+                                      //           responseData.cast<String>();
+
+                                      //       return Container(
+                                      //         child: ListView.builder(
+                                      //           itemCount:
+                                      //               selectedServiceList.length,
+                                      //           itemBuilder: (context, index) {
+                                      //             return Text(
+                                      //                 selectedServiceList[
+                                      //                     index]!);
+                                      //           },
+                                      //         ),
+                                      //       );
+                                      //     }
+                                      //   },
+                                      // ),
                                       SizedBox(
                                         height: mQuery.size.height * 0.02,
                                       ),
@@ -594,100 +510,276 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
                                           children: [
-                                            Container(
-                                              width: mQuery.size.width * 0.3,
-                                              height: mQuery.size.height * 0.2,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    SI1 == false
-                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
-                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
-                                                  ),
-                                                  onError:
-                                                      (exception, stackTrace) {
-                                                    // If loading imageUrl1 fails, fallback to imageUrl2
-                                                    setState(() {
-                                                      SI1 = true;
-                                                    });
+                                            // Gallery 1/4
+                                            GestureDetector(
+                                              onTap: () {
+                                                // Open image in full-screen container
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width, // full width
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.7, // full height
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .transparent,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          8.0)),
+                                                          image:
+                                                              DecorationImage(
+                                                            image: NetworkImage(
+                                                              SI1 == false
+                                                                  ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
+                                                                  : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
+                                                            ),
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
+                                                );
+                                              },
+                                              child: Container(
+                                                width: mQuery.size.width * 0.3,
+                                                height:
+                                                    mQuery.size.height * 0.2,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      SI1 == false
+                                                          ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
+                                                          : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
+                                                    ),
+                                                    onError: (exception,
+                                                        stackTrace) {
+                                                      // If loading imageUrl1 fails, fallback to imageUrl2
+                                                      setState(() {
+                                                        SI1 = true;
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                             SizedBox(
                                                 width:
                                                     mQuery.size.width * 0.032),
-                                            Container(
-                                              width: mQuery.size.width * 0.3,
-                                              height: mQuery.size.height * 0.2,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    SI1 == false
-                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
-                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
-                                                  ),
-                                                  onError:
-                                                      (exception, stackTrace) {
-                                                    // If loading imageUrl1 fails, fallback to imageUrl2
-                                                    setState(() {
-                                                      SI1 = true;
-                                                    });
+                                            // Gallery 2/4
+                                            GestureDetector(
+                                              onTap: () {
+                                                // Open image in full-screen container
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width, // full width
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.7, // full height
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .transparent,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          image:
+                                                              DecorationImage(
+                                                            image: NetworkImage(
+                                                              SI1 == false
+                                                                  ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
+                                                                  : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
+                                                            ),
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
+                                                );
+                                              },
+                                              child: Container(
+                                                width: mQuery.size.width * 0.3,
+                                                height:
+                                                    mQuery.size.height * 0.2,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      SI1 == false
+                                                          ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
+                                                          : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
+                                                    ),
+                                                    onError: (exception,
+                                                        stackTrace) {
+                                                      // If loading imageUrl1 fails, fallback to imageUrl2
+                                                      setState(() {
+                                                        SI1 = true;
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                             SizedBox(
                                                 width:
                                                     mQuery.size.width * 0.032),
-                                            Container(
-                                              width: mQuery.size.width * 0.3,
-                                              height: mQuery.size.height * 0.2,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    SI1 == false
-                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/3.jpg"
-                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/3.png",
-                                                  ),
-                                                  onError:
-                                                      (exception, stackTrace) {
-                                                    // If loading imageUrl1 fails, fallback to imageUrl2
-                                                    setState(() {
-                                                      SI1 = true;
-                                                    });
+                                            // Gallery 3/4
+                                            GestureDetector(
+                                              onTap: () {
+                                                // Open image in full-screen container
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width, // full width
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.7, // full height
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .transparent,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          8.0)),
+                                                          image:
+                                                              DecorationImage(
+                                                            image: NetworkImage(
+                                                              SI1 == false
+                                                                  ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
+                                                                  : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
+                                                            ),
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
+                                                );
+                                              },
+                                              child: Container(
+                                                width: mQuery.size.width * 0.3,
+                                                height:
+                                                    mQuery.size.height * 0.2,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      SI1 == false
+                                                          ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
+                                                          : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
+                                                    ),
+                                                    onError: (exception,
+                                                        stackTrace) {
+                                                      // If loading imageUrl1 fails, fallback to imageUrl2
+                                                      setState(() {
+                                                        SI1 = true;
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                             SizedBox(
                                                 width:
                                                     mQuery.size.width * 0.032),
-                                            Container(
-                                              width: mQuery.size.width * 0.3,
-                                              height: mQuery.size.height * 0.2,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    SI1 == false
-                                                        ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/4.jpg"
-                                                        : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/4.png",
-                                                  ),
-                                                  onError:
-                                                      (exception, stackTrace) {
-                                                    // If loading imageUrl1 fails, fallback to imageUrl2
-                                                    setState(() {
-                                                      SI1 = true;
-                                                    });
+                                            // Gallery 4/4
+                                            GestureDetector(
+                                              onTap: () {
+                                                // Open image in full-screen container
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Dialog(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width, // full width
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.7, // full height
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .transparent,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          image:
+                                                              DecorationImage(
+                                                            image: NetworkImage(
+                                                              SI1 == false
+                                                                  ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
+                                                                  : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
+                                                            ),
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
+                                                );
+                                              },
+                                              child: Container(
+                                                width: mQuery.size.width * 0.3,
+                                                height:
+                                                    mQuery.size.height * 0.2,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      SI1 == false
+                                                          ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
+                                                          : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
+                                                    ),
+                                                    onError: (exception,
+                                                        stackTrace) {
+                                                      // If loading imageUrl1 fails, fallback to imageUrl2
+                                                      setState(() {
+                                                        SI1 = true;
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
                                               ),
                                             ),

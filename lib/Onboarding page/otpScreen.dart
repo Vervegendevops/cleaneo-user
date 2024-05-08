@@ -5,6 +5,7 @@ import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Map/enableLocation.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
 import 'package:cleaneo_user/end.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
 import 'package:getwidget/types/gf_loader_type.dart';
 import "package:http/http.dart" as http;
@@ -274,7 +275,9 @@ class _OTPPageState extends State<OTPPage> {
                               UserData.write('phone', userList['phone']);
                               UserData.write('Wallet', userList['Wallet']);
                               UserData.write('ID', userList['ID']);
+                              UserData.write('authen', 'true');
                               print(UserData.read('ID'));
+                              print(UserData.read('authen'));
                               UserData.write(
                                   'total_order', userList['total_order']);
 

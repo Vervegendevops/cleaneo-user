@@ -1,6 +1,8 @@
+import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Map/enableLocation.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
 import 'package:cleaneo_user/Onboarding%20page/signup.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import for HapticFeedback
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +11,7 @@ import 'package:get_storage/get_storage.dart'; // Import dart:io for exit functi
 
 String auth = '';
 String OTP = '';
+final authentication = GetStorage();
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -32,6 +35,9 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(UserData.read('ID'));
+    print(UserData.read('authen'));
+
     auth = '';
     var mQuery = MediaQuery.of(context);
     return WillPopScope(
@@ -159,6 +165,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                         GestureDetector(
                           onTap: () {
+                            authentication.write('Authentiation', 'Guest');
                             HapticFeedback
                                 .heavyImpact(); // Heavy haptic feedback
                             Navigator.push(context,

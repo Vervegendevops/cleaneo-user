@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:cleaneo_user/Dashboard/home_page.dart';
+import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Onboarding%20page/welcome.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
@@ -27,13 +30,16 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(
       Duration(seconds: 3),
       () => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (BuildContext context) => WelcomePage()),
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                UserData.read('authen') == 'true' ? HomePage() : WelcomePage()),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    print(UserData.read('authen'));
     return AnimatedOpacity(
       opacity: _opacity, // Use the opacity variable
       duration: Duration(seconds: 2),

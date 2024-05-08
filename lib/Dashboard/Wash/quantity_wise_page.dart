@@ -187,42 +187,6 @@ class _QuantityWisePageState extends State<QuantityWisePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.vibrate();
-                          setState(() {
-                            selectedType = 'Women';
-                          });
-                        },
-                        child: buildCategoryContainer(
-                            mQuery, "assets/images/Women.png", "Women"),
-                      ),
-                      SizedBox(width: mQuery.size.width * 0.03),
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.vibrate();
-                          setState(() {
-                            selectedType = 'Men';
-                          });
-                        },
-                        child: buildCategoryContainer(
-                            mQuery, "assets/images/Men.png", "Men"),
-                      ),
-                      SizedBox(width: mQuery.size.width * 0.03),
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.vibrate();
-                          setState(() {
-                            selectedType = 'Household';
-                          });
-                        },
-                        child: buildCategoryContainer(
-                            mQuery, "assets/images/Household.png", "Household"),
-                      ),
-                    ],
-                  ),
                   SizedBox(height: mQuery.size.height * 0.023),
                   SingleChildScrollView(
                     child: Column(

@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'package:cleaneo_user/Global/global.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-
+import 'package:http/http.dart' as http;
 import '../Dashboard/home_page.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -23,6 +26,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
   PhoneNumber? phoneNumber;
   String selectedCountryCode = 'IN';
   String? _selectedImagePath;
+  var userName = UserData.read('name');
+  var phNo = UserData.read('phone');
+  var email = UserData.read('email');
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -32,6 +38,68 @@ class _MyProfilePageState extends State<MyProfilePage> {
       setState(() {
         _selectedImagePath = pickedFile.path;
       });
+    }
+  }
+
+  // API for updating profile
+  Future<void> _updateProfile() async {
+    // Call your update API here
+    Uri url = Uri.parse(
+        'https://drycleaneo.com/CleaneoUser/api/updateUser/Cleaneo00001');
+    var response = await http.patch(
+      url,
+      body: {
+        'name': nameController.text,
+        'email': emailController.text,
+        'phone': phonenoController.text,
+      },
+    );
+    print('Response status code: ${response.statusCode}');
+    print("Hello");
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // If update is successful, show success message
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Profile updated successfully!'),
+            actions: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  child: Text('OK'),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // If update fails, show error message
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to update profile. Please try again later.'),
+            actions: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  child: Text('OK'),
+                ),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -50,10 +118,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
             SizedBox(height: mQuery.size.height * 0.034),
             Padding(
               padding: EdgeInsets.only(
-                top: mQuery.size.height*0.058,
-                bottom: mQuery.size.height*0.03,
-                left: mQuery.size.width*0.045,
-                right: mQuery.size.width*0.045,
+                top: mQuery.size.height * 0.058,
+                bottom: mQuery.size.height * 0.03,
+                left: mQuery.size.width * 0.045,
+                right: mQuery.size.width * 0.045,
               ),
               child: Row(
                 children: [
@@ -61,8 +129,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                            return HomePage();
-                          }));
+                        return HomePage();
+                      }));
                     },
                     child: Icon(
                       Icons.arrow_back,
@@ -75,7 +143,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   Text(
                     "My Profile",
                     style: TextStyle(
-                        fontSize: mQuery.size.height*0.027,
+                        fontSize: mQuery.size.height * 0.027,
                         color: Colors.white,
                         fontFamily: 'SatoshiBold'),
                   )
@@ -121,18 +189,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   ),
                                   child: _selectedImagePath != null
                                       ? Image.file(
-                                    File(_selectedImagePath!),
-                                    width: 130,
-                                    height: 130,
-                                    fit: BoxFit.cover,
-                                  )
+                                          File(_selectedImagePath!),
+                                          width: 130,
+                                          height: 130,
+                                          fit: BoxFit.cover,
+                                        )
                                       : ProfilePicture(
-                                    name: "",
-                                    radius: 65,
-                                    fontsize: 10,
-                                    img:
-                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwKKzV4oKveaDEmBr38LXuMWTho1d1-mjOOcjau6XJ1A&s",
-                                  ),
+                                          name: "",
+                                          radius: 65,
+                                          fontsize: 10,
+                                          img:
+                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwKKzV4oKveaDEmBr38LXuMWTho1d1-mjOOcjau6XJ1A&s",
+                                        ),
                                 ),
                               ),
                             ),
@@ -142,9 +210,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 shape: BoxShape.circle,
                               ),
                               child: IconButton(
-                                icon: Image.asset("assets/images/drawer-images/edit.png",
-                                width: mQuery.size.width*0.06,
-                                color: Colors.white,),
+                                icon: Image.asset(
+                                  "assets/images/drawer-images/edit.png",
+                                  width: mQuery.size.width * 0.06,
+                                  color: Colors.white,
+                                ),
                                 onPressed: _pickImage,
                               ),
                             ),
@@ -160,7 +230,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             Text(
                               "Full Name*",
                               style: TextStyle(
-                                  fontSize: mQuery.size.height*0.02,
+                                  fontSize: mQuery.size.height * 0.02,
                                   fontFamily: 'SatoshiBold'),
                             ),
                             SizedBox(height: mQuery.size.height * 0.01),
@@ -184,14 +254,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 controller: nameController,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.symmetric(
-                                    vertical: mQuery.size.height*0.0155
-                                  ),
+                                      vertical: mQuery.size.height * 0.0155),
                                   prefixIcon: Icon(Icons.person),
                                   focusedBorder: InputBorder.none,
                                   enabledBorder: InputBorder.none,
-                                  hintText: "Enter Full Name",
+                                  hintText: userName,
                                   hintStyle: TextStyle(
-                                    fontSize: mQuery.size.height*0.02,
+                                    fontSize: mQuery.size.height * 0.02,
                                     fontFamily: 'SatoshiMedium',
                                     color: Color(0xffABAFB1),
                                   ),
@@ -202,7 +271,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             Text(
                               "Phone Number*",
                               style: TextStyle(
-                                  fontSize: mQuery.size.height*0.02,
+                                  fontSize: mQuery.size.height * 0.02,
                                   fontFamily: 'SatoshiBold'),
                             ),
                             SizedBox(height: mQuery.size.height * 0.01),
@@ -223,14 +292,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               ),
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                      width: mQuery.size.width * 0.03),
+                                  SizedBox(width: mQuery.size.width * 0.03),
                                   Icon(Icons.phone_outlined),
                                   CountryCodePicker(
                                     onChanged: (code) {
                                       setState(() {
-                                        selectedCountryCode =
-                                        code.dialCode!;
+                                        selectedCountryCode = code.dialCode!;
                                       });
                                     },
                                     initialSelection: 'IN',
@@ -255,18 +322,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                       controller: phonenoController,
                                       maxLength: 10,
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly // Allow only numeric input
+                                        FilteringTextInputFormatter
+                                            .digitsOnly // Allow only numeric input
                                       ],
                                       decoration: InputDecoration(
-                                        hintText: "Enter Phone Number*",
+                                        hintText: phNo,
                                         hintStyle: TextStyle(
-                                          fontSize: mQuery.size.height*0.02,
+                                          fontSize: mQuery.size.height * 0.02,
                                           fontFamily: 'SatoshiMedium',
                                           color: Color(0xffABAFB1),
                                         ),
                                         contentPadding: EdgeInsets.only(
-                                          top: mQuery.size.height*0.00005
-                                        ),
+                                            top: mQuery.size.height * 0.00005),
                                         counter: SizedBox.shrink(),
                                         focusedBorder: InputBorder.none,
                                         enabledBorder: InputBorder.none,
@@ -280,7 +347,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             Text(
                               "Email",
                               style: TextStyle(
-                                  fontSize: mQuery.size.height*0.02,
+                                  fontSize: mQuery.size.height * 0.02,
                                   fontFamily: 'SatoshiBold'),
                             ),
                             SizedBox(height: mQuery.size.height * 0.01),
@@ -304,14 +371,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 controller: emailController,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.symmetric(
-                                      vertical: mQuery.size.height*0.014
-                                  ),
+                                      vertical: mQuery.size.height * 0.014),
                                   prefixIcon: Icon(Icons.email_outlined),
                                   focusedBorder: InputBorder.none,
                                   enabledBorder: InputBorder.none,
-                                  hintText: "Enter Email",
+                                  hintText: email,
                                   hintStyle: TextStyle(
-                                    fontSize: mQuery.size.height*0.02,
+                                    fontSize: mQuery.size.height * 0.02,
                                     fontFamily: 'SatoshiMedium',
                                     color: Color(0xffABAFB1),
                                   ),
@@ -320,11 +386,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             ),
                             SizedBox(height: mQuery.size.height * 0.068),
                             GestureDetector(
-                              onTap: ()
-                              {
-                                Navigator.push(context, MaterialPageRoute(builder: (context){
-                                  return HomePage();
-                                }));
+                              onTap: () {
+                                _updateProfile();
+
+                                // Navigator.push(context,
+                                //     MaterialPageRoute(builder: (context) {
+                                //   return HomePage();
+                                // }));
                               },
                               child: Container(
                                 width: double.infinity,
@@ -336,10 +404,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                   child: Text(
                                     "Save & Continue",
                                     style: TextStyle(
-                                      fontSize: mQuery.size.height*0.022,
-                                      color: Colors.white,
-                                      fontFamily: 'SatoshiBold'
-                                    ),
+                                        fontSize: mQuery.size.height * 0.022,
+                                        color: Colors.white,
+                                        fontFamily: 'SatoshiBold'),
                                   ),
                                 ),
                               ),

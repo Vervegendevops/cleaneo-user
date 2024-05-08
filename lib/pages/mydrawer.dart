@@ -9,6 +9,7 @@ import 'package:cleaneo_user/Help/help_page.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
 import 'package:cleaneo_user/Onboarding%20page/welcome.dart';
 import 'package:cleaneo_user/Payment/manage_cards_page.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/donate.dart';
 import 'package:cleaneo_user/pages/myprofile.dart';
 import 'package:cleaneo_user/pages/refer_page.dart';

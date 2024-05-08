@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cleaneo_user/main.dart';
 import "package:http/http.dart" as http;
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
@@ -22,7 +23,7 @@ class _CustomerServicePageState extends State<CustomerServicePage> {
 
     // Create the request body
     Map<String, String> requestBody = {
-      'sendor_ID': UserData.read('ID'),
+      'sendor_ID': UserData.read('ID').toString(),
       'name': UserData.read('name'),
       'email': UserData.read('email'),
       'phone': UserData.read('phone'),

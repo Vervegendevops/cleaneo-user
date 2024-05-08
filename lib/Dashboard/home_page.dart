@@ -5,6 +5,7 @@ import 'package:cleaneo_user/Dashboard/Wallet/wallet_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/vendorDetails_page.dart';
 import 'package:cleaneo_user/Global/global.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/donate.dart';
 import 'package:cleaneo_user/pages/dryclean_page.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
     {"image": "assets/images/Dry Clean.png", "text": "Dry Clean"},
     {"image": "assets/images/Wash.png", "text": "Wash"},
     {"image": "assets/images/Wash & Iron.png", "text": "Wash & Iron"},
-    {"image": "assets/images/Steam Iron.png", "text": "Stream Iron"},
+    {"image": "assets/images/Steam Iron.png", "text": "Steam Iron"},
     {"image": "assets/images/Premium Wash.png", "text": "Premium Wash"},
     {"image": "assets/images/Shoe & Bag Care.png", "text": "Shoe & Bag Care"},
   ];
