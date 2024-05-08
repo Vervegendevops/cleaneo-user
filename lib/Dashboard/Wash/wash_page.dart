@@ -1368,27 +1368,27 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                         });
                                                                       },
                                                                     ),
-                                                                    Container(
-                                                                      padding: EdgeInsets.only(
-                                                                          right:
-                                                                              28),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.end,
-                                                                        children: [
-                                                                          Text(
-                                                                            '₹ ${(totalCost).toStringAsFixed(0)}',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: mQuery.size.height * 0.0173,
-                                                                              fontFamily: 'SatoshiMedium',
-                                                                              color: Color(0xff29b2fe),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
+                                                                    // Container(
+                                                                    //   padding: EdgeInsets.only(
+                                                                    //       right:
+                                                                    //           28),
+                                                                    //   child:
+                                                                    //       Row(
+                                                                    //     mainAxisAlignment:
+                                                                    //         MainAxisAlignment.end,
+                                                                    //     children: [
+                                                                    //       Text(
+                                                                    //         '₹ .toStringAsFixed(0)}',
+                                                                    //         style:
+                                                                    //             TextStyle(
+                                                                    //           fontSize: mQuery.size.height * 0.0173,
+                                                                    //           fontFamily: 'SatoshiMedium',
+                                                                    //           color: Color(0xff29b2fe),
+                                                                    //         ),
+                                                                    //       ),
+                                                                    //     ],
+                                                                    //   ),
+                                                                    // ),
                                                                   ],
                                                                 );
                                                               },
@@ -1713,7 +1713,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                   child:
                                                                       SizedBox()),
                                                               Text(
-                                                                "₹ ${prices["Item Total"]?.toStringAsFixed(2)}",
+                                                                "₹ $FinalTotalCost",
                                                                 style:
                                                                     TextStyle(
                                                                   fontSize: mQuery
@@ -1733,124 +1733,124 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                     .height *
                                                                 0.01,
                                                           ),
-                                                          DottedLine(
-                                                            direction:
-                                                                Axis.horizontal,
-                                                            alignment:
-                                                                WrapAlignment
-                                                                    .center,
-                                                            lineLength:
-                                                                double.infinity,
-                                                            lineThickness: 1.0,
-                                                            dashLength: 4.0,
-                                                            dashColor:
-                                                                Colors.black54,
-                                                            dashRadius: 0.0,
-                                                            dashGapLength: 4.0,
-                                                            dashGapRadius: 0.0,
-                                                          ),
-                                                          SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                "Delivery Charges",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.017,
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      SizedBox()),
-                                                              Text(
-                                                                "₹ ${prices["Delivery Charges"]?.toStringAsFixed(2)}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.017,
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01,
-                                                          ),
-                                                          DottedLine(
-                                                            direction:
-                                                                Axis.horizontal,
-                                                            alignment:
-                                                                WrapAlignment
-                                                                    .center,
-                                                            lineLength:
-                                                                double.infinity,
-                                                            lineThickness: 1.0,
-                                                            dashLength: 4.0,
-                                                            dashColor:
-                                                                Colors.black54,
-                                                            dashRadius: 0.0,
-                                                            dashGapLength: 4.0,
-                                                            dashGapRadius: 0.0,
-                                                          ),
-                                                          SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                "Tax",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.017,
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                    SizedBox(),
-                                                              ),
-                                                              Text(
-                                                                "₹ ${prices["Tax"]?.toStringAsFixed(2)}",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.017,
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
+                                                          // DottedLine(
+                                                          //   direction:
+                                                          //       Axis.horizontal,
+                                                          //   alignment:
+                                                          //       WrapAlignment
+                                                          //           .center,
+                                                          //   lineLength:
+                                                          //       double.infinity,
+                                                          //   lineThickness: 1.0,
+                                                          //   dashLength: 4.0,
+                                                          //   dashColor:
+                                                          //       Colors.black54,
+                                                          //   dashRadius: 0.0,
+                                                          //   dashGapLength: 4.0,
+                                                          //   dashGapRadius: 0.0,
+                                                          // ),
+                                                          // SizedBox(
+                                                          //   height: mQuery.size
+                                                          //           .height *
+                                                          //       0.01,
+                                                          // ),
+                                                          // Row(
+                                                          //   children: [
+                                                          //     Text(
+                                                          //       "Delivery Charges",
+                                                          //       style:
+                                                          //           TextStyle(
+                                                          //         fontSize: mQuery
+                                                          //                 .size
+                                                          //                 .height *
+                                                          //             0.017,
+                                                          //         color: Colors
+                                                          //             .black54,
+                                                          //         fontFamily:
+                                                          //             'SatoshiRegular',
+                                                          //       ),
+                                                          //     ),
+                                                          //     Expanded(
+                                                          //         child:
+                                                          //             SizedBox()),
+                                                          //     Text(
+                                                          //       "₹ ${prices["Delivery Charges"]?.toStringAsFixed(2)}",
+                                                          //       style:
+                                                          //           TextStyle(
+                                                          //         fontSize: mQuery
+                                                          //                 .size
+                                                          //                 .height *
+                                                          //             0.017,
+                                                          //         color: Colors
+                                                          //             .black54,
+                                                          //         fontFamily:
+                                                          //             'SatoshiRegular',
+                                                          //       ),
+                                                          //     )
+                                                          //   ],
+                                                          // ),
+                                                          // SizedBox(
+                                                          //   height: mQuery.size
+                                                          //           .height *
+                                                          //       0.01,
+                                                          // ),
+                                                          // DottedLine(
+                                                          //   direction:
+                                                          //       Axis.horizontal,
+                                                          //   alignment:
+                                                          //       WrapAlignment
+                                                          //           .center,
+                                                          //   lineLength:
+                                                          //       double.infinity,
+                                                          //   lineThickness: 1.0,
+                                                          //   dashLength: 4.0,
+                                                          //   dashColor:
+                                                          //       Colors.black54,
+                                                          //   dashRadius: 0.0,
+                                                          //   dashGapLength: 4.0,
+                                                          //   dashGapRadius: 0.0,
+                                                          // ),
+                                                          // SizedBox(
+                                                          //   height: mQuery.size
+                                                          //           .height *
+                                                          //       0.01,
+                                                          // ),
+                                                          // Row(
+                                                          //   children: [
+                                                          //     Text(
+                                                          //       "Tax",
+                                                          //       style:
+                                                          //           TextStyle(
+                                                          //         fontSize: mQuery
+                                                          //                 .size
+                                                          //                 .height *
+                                                          //             0.017,
+                                                          //         color: Colors
+                                                          //             .black54,
+                                                          //         fontFamily:
+                                                          //             'SatoshiRegular',
+                                                          //       ),
+                                                          //     ),
+                                                          //     Expanded(
+                                                          //       child:
+                                                          //           SizedBox(),
+                                                          //     ),
+                                                          //     Text(
+                                                          //       "₹ ${prices["Tax"]?.toStringAsFixed(2)}",
+                                                          //       style:
+                                                          //           TextStyle(
+                                                          //         fontSize: mQuery
+                                                          //                 .size
+                                                          //                 .height *
+                                                          //             0.017,
+                                                          //         color: Colors
+                                                          //             .black54,
+                                                          //         fontFamily:
+                                                          //             'SatoshiRegular',
+                                                          //       ),
+                                                          //     )
+                                                          //   ],
+                                                          // ),
                                                           Divider(),
                                                           Row(
                                                             children: [
@@ -1868,7 +1868,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                   child:
                                                                       SizedBox()),
                                                               Text(
-                                                                totalSum,
+                                                                '$FinalTotalCost',
                                                                 style: TextStyle(
                                                                     fontSize: mQuery
                                                                             .size
@@ -1945,7 +1945,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                 ),
                                                               ),
                                                               Text(
-                                                                totalSum,
+                                                                '$FinalTotalCost',
                                                                 style:
                                                                     TextStyle(
                                                                   color: Colors
@@ -2097,7 +2097,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                itemName,
+                "$itemName ($type)",
                 style: TextStyle(
                   fontFamily: 'SatoshiMedium',
                   fontSize: mQuery.size.height * 0.017,
