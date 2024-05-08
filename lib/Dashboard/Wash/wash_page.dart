@@ -64,6 +64,12 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
       DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 1)));
   String formattedDayAfterTomorrow =
       DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 2)));
+  String DformattedToday =
+      DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 3)));
+  String DformattedTomorrow =
+      DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 4)));
+  String DformattedDayAfterTomorrow =
+      DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 5)));
 
   int length = 0;
   int selectedContainerIndex = -1;
@@ -79,6 +85,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    FinalTotalCost = 0;
     _saveAddress(addressController.text);
     // updateC();
     CartItems = [];
@@ -472,7 +479,12 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
         // dates3.add()
         List<String> times = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
-        List<String> dates2 = ["26 June", "28 June", "29 June"];
+        // List<String> dates2 = ["26 June", "28 June", "29 June"];
+        List<String> dates2 = [
+          DformattedToday,
+          DformattedTomorrow,
+          DformattedDayAfterTomorrow
+        ];
         List<String> times2 = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
         int? selectedDateIndex; // Track the selected date index
@@ -609,21 +621,44 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                   children: [
                                     for (int i = 0; i < times.length; i++)
                                       GestureDetector(
-                                        onTap: currentTime.isAfter(tenAM) &&
-                                                times[i] == "10am - 12pm"
-                                            ? null
-                                            : currentTime.isAfter(twoPM) &&
-                                                    times[i] == "02pm - 04pm"
-                                                ? null
-                                                : currentTime.isAfter(sixPM) &&
+                                        onTap: selectedDateIndex == 0
+                                            ? (currentTime.isAfter(tenAM) &&
+                                                    times[i] == "10am - 12pm"
+                                                ? () {
+                                                    setState() {
+                                                      selectedTimeIndex = -1;
+                                                    }
+                                                  }
+                                                : currentTime.isAfter(twoPM) &&
                                                         times[i] ==
-                                                            "06pm - 08pm"
-                                                    ? null
-                                                    : () {
-                                                        setState(() {
-                                                          selectedTimeIndex = i;
-                                                        });
-                                                      },
+                                                            "02pm - 04pm"
+                                                    ? () {
+                                                        setState() {
+                                                          selectedTimeIndex =
+                                                              -1;
+                                                        }
+                                                      }
+                                                    : currentTime.isAfter(
+                                                                sixPM) &&
+                                                            times[i] ==
+                                                                "06pm - 08pm"
+                                                        ? () {
+                                                            setState() {
+                                                              selectedTimeIndex =
+                                                                  -1;
+                                                            }
+                                                          }
+                                                        : () {
+                                                            setState(() {
+                                                              selectedTimeIndex =
+                                                                  i;
+                                                            });
+                                                          })
+                                            : () {
+                                                setState(() {
+                                                  selectedTimeIndex = i;
+                                                });
+                                              },
                                         child: Container(
                                           width: mQuery.size.width * 0.25,
                                           height: mQuery.size.height * 0.04,
@@ -634,27 +669,36 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                   color: selectedTimeIndex == i
                                                       ? Color(0xff009c1a)
                                                       : Colors.grey),
-                                              color: selectedTimeIndex == i
-                                                  ? Color(0xff009c1a)
-                                                  : currentTime.isAfter(tenAM) &&
-                                                          times[i] ==
-                                                              "10am - 12pm"
-                                                      ? const Color.fromARGB(
-                                                          255, 210, 210, 210)
-                                                      : currentTime.isAfter(
-                                                                  twoPM) &&
+                                              color: selectedDateIndex == 0
+                                                  ? (selectedTimeIndex == i
+                                                      ? Color(0xff009c1a)
+                                                      : currentTime.isAfter(tenAM) &&
                                                               times[i] ==
-                                                                  "02pm - 04pm"
+                                                                  "10am - 12pm"
                                                           ? const Color.fromARGB(
                                                               255, 210, 210, 210)
                                                           : currentTime.isAfter(
-                                                                      sixPM) &&
+                                                                      twoPM) &&
                                                                   times[i] ==
-                                                                      "06pm - 08pm"
-                                                              ? const Color
-                                                                  .fromARGB(255,
-                                                                  210, 210, 210)
-                                                              : Colors.white),
+                                                                      "02pm - 04pm"
+                                                              ? const Color.fromARGB(
+                                                                  255,
+                                                                  210,
+                                                                  210,
+                                                                  210)
+                                                              : currentTime.isAfter(sixPM) &&
+                                                                      times[i] ==
+                                                                          "06pm - 08pm"
+                                                                  ? const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      210,
+                                                                      210,
+                                                                      210)
+                                                                  : Colors.white)
+                                                  : selectedTimeIndex == i
+                                                      ? Color(0xff009c1a)
+                                                      : Colors.white),
                                           child: Center(
                                             child: Text(
                                               times[i],
@@ -929,268 +973,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                         Expanded(
                                                             child: SizedBox()),
                                                         TextButton(
-                                                          onPressed: () {
-                                                            showModalBottomSheet(
-                                                              isScrollControlled:
-                                                                  true,
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  height: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.7,
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius: BorderRadius.only(
-                                                                          topLeft: Radius.circular(
-                                                                              16),
-                                                                          topRight: Radius.circular(
-                                                                              16)),
-                                                                      color: Colors
-                                                                          .white),
-                                                                  child:
-                                                                      SingleChildScrollView(
-                                                                    child:
-                                                                        Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        SizedBox(
-                                                                          height:
-                                                                              mQuery.size.height * 0.03,
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              horizontal: 16),
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Text("Enter Address Details",
-                                                                                  style: TextStyle(
-                                                                                    fontSize: mQuery.size.height * 0.022,
-                                                                                    fontFamily: 'SatoshiBold',
-                                                                                  )),
-                                                                              Expanded(child: SizedBox()),
-                                                                              GestureDetector(
-                                                                                  onTap: () {
-                                                                                    Navigator.pop(context);
-                                                                                  },
-                                                                                  child: Icon(Icons.close))
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              mQuery.size.height * 0.022,
-                                                                        ),
-                                                                        Divider(),
-                                                                        Padding(
-                                                                          padding:
-                                                                              EdgeInsets.symmetric(horizontal: 16),
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              SizedBox(
-                                                                                height: mQuery.size.height * 0.022,
-                                                                              ),
-                                                                              Text(
-                                                                                "Complete address*",
-                                                                                style: TextStyle(fontSize: mQuery.size.height * 0.0183, fontFamily: 'SatoshiRegular', color: Colors.black54),
-                                                                              ),
-                                                                              SingleChildScrollView(
-                                                                                scrollDirection: Axis.horizontal,
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Image.asset(
-                                                                                      "assets/images/check-mark.png",
-                                                                                      width: 16,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: mQuery.size.width * 0.02,
-                                                                                    ),
-                                                                                    Container(
-                                                                                      width: 250,
-                                                                                      child: TextField(
-                                                                                        controller: addressController,
-                                                                                        style: TextStyle(fontFamily: 'SatoshiMedium'),
-                                                                                        cursorColor: Colors.grey,
-                                                                                        decoration: InputDecoration(
-                                                                                          focusColor: Colors.grey,
-                                                                                          border: InputBorder.none,
-                                                                                          hintMaxLines: 1,
-                                                                                        ),
-                                                                                        onChanged: (value) {
-                                                                                          setState(() {
-                                                                                            caddress = value;
-                                                                                            _saveAddress(caddress);
-                                                                                          });
-                                                                                        },
-                                                                                      ),
-                                                                                    ),
-                                                                                    // 66666666
-
-                                                                                    Text(
-                                                                                      "CHANGE",
-                                                                                      style: TextStyle(
-                                                                                        color: Colors.red,
-                                                                                        fontFamily: 'SatoshiMedium',
-                                                                                        fontSize: mQuery.size.height * 0.0173,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              Divider(
-                                                                                color: Colors.grey,
-                                                                              ),
-                                                                              Text(
-                                                                                "Floor (Optional)",
-                                                                                style: TextStyle(
-                                                                                  fontSize: mQuery.size.height * 0.0183,
-                                                                                  color: Colors.black54,
-                                                                                  fontFamily: 'SatoshiRegular',
-                                                                                ),
-                                                                              ),
-                                                                              TextField(
-                                                                                controller: floorController,
-                                                                                style: TextStyle(fontFamily: 'SatoshiMedium'),
-                                                                                cursorColor: Colors.grey,
-                                                                                decoration: InputDecoration(
-                                                                                  focusColor: Colors.grey,
-                                                                                  focusedBorder: UnderlineInputBorder(
-                                                                                    borderSide: BorderSide(color: Colors.grey),
-                                                                                  ),
-                                                                                  enabledBorder: UnderlineInputBorder(
-                                                                                    borderSide: BorderSide(color: Colors.grey),
-                                                                                  ),
-                                                                                  border: InputBorder.none,
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(
-                                                                                height: mQuery.size.height * 0.02,
-                                                                              ),
-                                                                              Text(
-                                                                                "How to reach (Optional)",
-                                                                                style: TextStyle(
-                                                                                  fontSize: mQuery.size.height * 0.0183,
-                                                                                  color: Colors.black54,
-                                                                                  fontFamily: 'SatoshiRegular',
-                                                                                ),
-                                                                              ),
-                                                                              TextField(
-                                                                                controller: reachController,
-                                                                                style: TextStyle(fontFamily: 'SatoshiMedium'),
-                                                                                cursorColor: Colors.grey,
-                                                                                decoration: InputDecoration(
-                                                                                  hintText: "Landmark/ Entry gate/ Street",
-                                                                                  hintStyle: TextStyle(
-                                                                                    color: Colors.black54,
-                                                                                    fontFamily: 'SatoshiRegular',
-                                                                                    fontSize: mQuery.size.height * 0.0183,
-                                                                                  ),
-                                                                                  focusColor: Colors.grey,
-                                                                                  focusedBorder: UnderlineInputBorder(
-                                                                                    borderSide: BorderSide(color: Colors.grey),
-                                                                                  ),
-                                                                                  enabledBorder: UnderlineInputBorder(
-                                                                                    borderSide: BorderSide(color: Colors.grey),
-                                                                                  ),
-                                                                                  border: InputBorder.none,
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(
-                                                                                height: mQuery.size.height * 0.032,
-                                                                              ),
-                                                                              Text(
-                                                                                "Tag this location for later *",
-                                                                                style: TextStyle(
-                                                                                  fontSize: mQuery.size.height * 0.0183,
-                                                                                  color: Colors.black54,
-                                                                                  fontFamily: 'SatoshiRegular',
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(
-                                                                                height: mQuery.size.height * 0.02,
-                                                                              ),
-                                                                              Row(children: [
-                                                                                for (int i = 0; i < addresses.length; i++)
-                                                                                  Padding(
-                                                                                    padding: EdgeInsets.only(right: 10),
-                                                                                    child: GestureDetector(
-                                                                                      onTap: () {
-                                                                                        setState(() {
-                                                                                          selectedAddressIndex = i;
-                                                                                          aselectedAddress = addresses[i];
-                                                                                          _saveSelectedAddress(i, addresses[i]); // Update the selected address
-                                                                                        });
-                                                                                      },
-                                                                                      child: Container(
-                                                                                        width: mQuery.size.width * 0.22,
-                                                                                        height: mQuery.size.height * 0.045,
-                                                                                        decoration: BoxDecoration(
-                                                                                          boxShadow: [
-                                                                                            BoxShadow(
-                                                                                              color: Colors.grey.withOpacity(0.5),
-                                                                                              spreadRadius: 0.2,
-                                                                                              blurRadius: 7,
-                                                                                              offset: Offset(0, 0),
-                                                                                            ),
-                                                                                          ],
-                                                                                          borderRadius: BorderRadius.circular(6),
-                                                                                          color: selectedAddressIndex == i ? Colors.cyan : Colors.white,
-                                                                                        ),
-                                                                                        child: Center(
-                                                                                          child: Text(
-                                                                                            addresses[i],
-                                                                                            style: TextStyle(
-                                                                                              fontSize: mQuery.size.height * 0.0195,
-                                                                                              color: selectedAddressIndex == i ? Colors.white : Colors.cyan,
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                              ]),
-                                                                              SizedBox(
-                                                                                height: mQuery.size.height * 0.068,
-                                                                              ),
-                                                                              GestureDetector(
-                                                                                onTap: () {
-                                                                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                                                    return AddressPage();
-                                                                                  }));
-                                                                                },
-                                                                                child: Container(
-                                                                                  width: double.infinity,
-                                                                                  height: mQuery.size.height * 0.054,
-                                                                                  decoration: BoxDecoration(color: Color(0xff29b2fe), borderRadius: BorderRadius.circular(8)),
-                                                                                  child: Center(
-                                                                                    child: Text(
-                                                                                      "Save Address",
-                                                                                      style: TextStyle(fontSize: mQuery.size.height * 0.022, fontFamily: 'SatoshiBold', color: Colors.white),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              )
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
+                                                          onPressed: () {},
                                                           child: Text(
                                                             "CHANGE",
                                                             style: TextStyle(
