@@ -7,6 +7,7 @@ String Signupemail = "";
 List<Map<String, dynamic>> CartItems = [];
 int TotalCost = 0;
 int FinalTotalCost = 0;
+int GrandTotalCost = 0;
 String UserID = '';
 int lengthOfCart = 0;
 List<Map<String, dynamic>> AddressBook = [];

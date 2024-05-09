@@ -276,6 +276,7 @@ class _OTPPageState extends State<OTPPage> {
                               UserData.write('Wallet', userList['Wallet']);
                               UserData.write('ID', userList['ID']);
                               UserData.write('authen', 'true');
+                              UserData.write('Wallet', userList['Wallet']);
                               print(UserData.read('ID'));
                               print(UserData.read('authen'));
                               UserData.write(

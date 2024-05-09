@@ -4,8 +4,10 @@ import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
 import 'package:cleaneo_user/Dashboard/testing/quantity.dart';
 import 'package:cleaneo_user/Dashboard/testing/weight.dart';
 import 'package:cleaneo_user/Global/global.dart';
+import 'package:cleaneo_user/Onboarding%20page/login.dart';
 import 'package:cleaneo_user/Payment/payment_page.dart';
 import 'package:cleaneo_user/Payment/razorpay.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -41,6 +43,31 @@ class WashPage extends StatefulWidget {
 }
 
 class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
+  Future<Object> fetchResponse(String phoneNumber) async {
+    final url = 'https://drycleaneo.com/CleaneoUser/api/signedUp/$phoneNumber';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        userList = jsonDecode(response.body); // Decode the response
+        print(userList);
+        UserData.write('Wallet', userList['Wallet']);
+        print(userList['Wallet']);
+
+        return response.body == 'true';
+      } else {
+        // If the response status code is not 200, throw an exception or handle
+        // the error accordingly.
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      print('Error fetching data: $e');
+      return false; // Return false in case of an error.
+    }
+  }
+
   TextEditingController searchController = TextEditingController();
   TextEditingController extranoteController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -89,6 +116,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     FinalTotalCost = 0;
+    fetchResponse(UserData.read('phone'));
     _saveAddress(addressController.text);
     // updateC();
     CartItems = [];
@@ -1264,18 +1292,15 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                   extranoteController,
                                                               onChanged:
                                                                   (value) {
-                                                                setState() {
-                                                                  ExtraNotes =
-                                                                      value;
-                                                                  print(value);
-                                                                }
+                                                                ExtraNotes =
+                                                                    value;
+                                                                print(value);
                                                               },
                                                               onSubmitted:
                                                                   (value) {
-                                                                setState() {
-                                                                  ExtraNotes =
-                                                                      value;
-                                                                }
+                                                                ExtraNotes =
+                                                                    value;
+                                                                print(value);
                                                               },
                                                               cursorColor:
                                                                   Colors
@@ -1377,13 +1402,20 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                         selectedContainerIndex ==
                                                                             0,
                                                                     onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        selectedContainerIndex =
-                                                                            0;
-                                                                        SupportRider =
-                                                                            '10';
-                                                                      });
+                                                                      if (selectedContainerIndex !=
+                                                                          0) {
+                                                                        setState(
+                                                                            () {
+                                                                          selectedContainerIndex =
+                                                                              0;
+                                                                          SupportRider =
+                                                                              '10';
+                                                                          GrandTotalCost =
+                                                                              FinalTotalCost + 10;
+                                                                          // print(
+                                                                          //     selectedContainerIndex);
+                                                                        });
+                                                                      }
                                                                     },
                                                                   ),
                                                                   SizedBox(
@@ -1398,13 +1430,18 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                         selectedContainerIndex ==
                                                                             1,
                                                                     onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        selectedContainerIndex =
-                                                                            1;
-                                                                        SupportRider =
-                                                                            '20';
-                                                                      });
+                                                                      if (selectedContainerIndex !=
+                                                                          1) {
+                                                                        setState(
+                                                                            () {
+                                                                          selectedContainerIndex =
+                                                                              1;
+                                                                          SupportRider =
+                                                                              '20';
+                                                                          GrandTotalCost =
+                                                                              FinalTotalCost + 20;
+                                                                        });
+                                                                      }
                                                                     },
                                                                   ),
                                                                   SizedBox(
@@ -1419,13 +1456,18 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                         selectedContainerIndex ==
                                                                             2,
                                                                     onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        selectedContainerIndex =
-                                                                            2;
-                                                                        SupportRider =
-                                                                            '30';
-                                                                      });
+                                                                      if (selectedContainerIndex !=
+                                                                          2) {
+                                                                        setState(
+                                                                            () {
+                                                                          selectedContainerIndex =
+                                                                              2;
+                                                                          SupportRider =
+                                                                              '30';
+                                                                          GrandTotalCost =
+                                                                              FinalTotalCost + 30;
+                                                                        });
+                                                                      }
                                                                     },
                                                                   ),
                                                                 ],
@@ -1690,7 +1732,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                   child:
                                                                       SizedBox()),
                                                               Text(
-                                                                '$FinalTotalCost',
+                                                                '$GrandTotalCost',
                                                                 style: TextStyle(
                                                                     fontSize: mQuery
                                                                             .size
@@ -2064,7 +2106,7 @@ class PaymentConfirmation extends StatefulWidget {
 }
 
 class _PaymentConfirmationState extends State<PaymentConfirmation> {
-  int isSelected = 1;
+  int isSelectedd = UserData.read('Wallet') == 0 ? 0 : 1;
   Razorpay? _razorpay;
 
   @override
@@ -2123,7 +2165,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
 
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.35,
+      height: MediaQuery.of(context).size.height * 0.45,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -2136,23 +2178,66 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
           Container(
             decoration: BoxDecoration(
                 border: Border.all(
-                  color: isSelected == 1 ? Color(0xff29b2fe) : Colors.white,
+                  color: isSelectedd == 1 ? Color(0xff29b2fe) : Colors.white,
                 ),
                 borderRadius: BorderRadius.circular(10)),
             width: MediaQuery.of(context).size.width * 0.9,
             child: ListTile(
               leading: Icon(
                 Icons.wallet,
-                color: isSelected == 1 ? Color(0xff29b2fe) : Colors.black,
+                color: isSelectedd == 1 ? Color(0xff29b2fe) : Colors.black,
+              ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Cleaneo Wallet',
+                    style: TextStyle(
+                        color: isSelectedd == 1
+                            ? Color(0xff29b2fe)
+                            : Colors.black),
+                  ),
+                  Text(
+                    'Balance : ${UserData.read('Wallet')}',
+                    style: TextStyle(
+                        color: isSelectedd == 1
+                            ? Color(0xff29b2fe)
+                            : Colors.black),
+                  ),
+                ],
+              ),
+              onTap: UserData.read('Wallet') == '0'
+                  ? null
+                  : () {
+                      setState(() {
+                        isSelectedd = 1;
+                      });
+                    },
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelectedd == 3 ? Color(0xff29b2fe) : Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(10)),
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: ListTile(
+              leading: Icon(
+                Icons.money,
+                color: isSelectedd == 3 ? Color(0xff29b2fe) : Colors.black,
               ),
               title: Text(
-                'Cleaneo Wallet',
+                'Cash on Delivery',
                 style: TextStyle(
-                    color: isSelected == 1 ? Color(0xff29b2fe) : Colors.black),
+                    color: isSelectedd == 3 ? Color(0xff29b2fe) : Colors.black),
               ),
               onTap: () {
                 setState(() {
-                  isSelected = 1;
+                  isSelectedd = 3;
                 });
               },
             ),
@@ -2163,23 +2248,23 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
           Container(
             decoration: BoxDecoration(
                 border: Border.all(
-                  color: isSelected == 2 ? Color(0xff29b2fe) : Colors.white,
+                  color: isSelectedd == 2 ? Color(0xff29b2fe) : Colors.white,
                 ),
                 borderRadius: BorderRadius.circular(10)),
             width: MediaQuery.of(context).size.width * 0.9,
             child: ListTile(
               leading: Icon(
                 Icons.payment,
-                color: isSelected == 2 ? Color(0xff29b2fe) : Colors.black,
+                color: isSelectedd == 2 ? Color(0xff29b2fe) : Colors.black,
               ),
               title: Text(
                 'Pay using UPI, Net Banking and Debit & Credit Cards',
                 style: TextStyle(
-                    color: isSelected == 2 ? Color(0xff29b2fe) : Colors.black),
+                    color: isSelectedd == 2 ? Color(0xff29b2fe) : Colors.black),
               ),
               onTap: () {
                 setState(() {
-                  isSelected = 2;
+                  isSelectedd = 2;
                 });
                 // Navigate to the PaymentPage if needed
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage()));
