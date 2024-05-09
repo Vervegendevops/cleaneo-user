@@ -42,6 +42,8 @@ class WashPage extends StatefulWidget {
   State<WashPage> createState() => _WashPageState();
 }
 
+int selectedContainerIndex = -1;
+
 class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
   Future<Object> fetchResponse(String phoneNumber) async {
     final url = 'https://drycleaneo.com/CleaneoUser/api/signedUp/$phoneNumber';
@@ -102,7 +104,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
       DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 5)));
 
   int length = 0;
-  int selectedContainerIndex = -1;
+
   late TabController _tabController;
   bool _isDropdownOpen = false;
   late Timer _timer;
@@ -2277,7 +2279,18 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
           SizedBox(
             child: GestureDetector(
               onTap: () {
-                openPaymentPortal();
+                if (isSelectedd == 1) {
+                  if (int.parse(UserData.read('Wallet')) < GrandTotalCost) {
+                    print('less balance');
+                    Fluttertoast.showToast(
+                        msg: "Insufficient Balance!", timeInSecForIosWeb: 4);
+                  }
+                } else if (isSelectedd == 3) {
+                  print('Cash on delivery');
+                } else if (isSelectedd == 2) {
+                  openPaymentPortal();
+                }
+
                 // Navigator.push(context, MaterialPageRoute(builder: (context) {
                 //   return PaymentPage();
                 // }));
