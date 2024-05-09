@@ -5,10 +5,12 @@ import 'package:cleaneo_user/Dashboard/testing/quantity.dart';
 import 'package:cleaneo_user/Dashboard/testing/weight.dart';
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Payment/payment_page.dart';
+import 'package:cleaneo_user/Payment/razorpay.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/byweight_page.dart';
@@ -16,6 +18,7 @@ import 'package:cleaneo_user/Dashboard/Wash/quantity_wise_page.dart';
 import 'package:cleaneo_user/pages/dryclean_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 int selectedServiceIndex = 0;
@@ -570,6 +573,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                         onTap: () {
                                           setState(() {
                                             selectedDateIndex = i;
+                                            PickupDate = dates[i];
+                                            print(PickupDate);
                                           });
                                         },
                                         child: Container(
@@ -652,11 +657,16 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                             setState(() {
                                                               selectedTimeIndex =
                                                                   i;
+                                                              PickupTime =
+                                                                  times[i];
+                                                              print(PickupTime);
                                                             });
                                                           })
                                             : () {
                                                 setState(() {
                                                   selectedTimeIndex = i;
+                                                  PickupTime = times[i];
+                                                  print(PickupTime);
                                                 });
                                               },
                                         child: Container(
@@ -767,6 +777,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                         onTap: () {
                                           setState(() {
                                             selectedDateIndex2 = i;
+                                            DeliveryDate = dates2[i];
+                                            print(DeliveryDate);
                                           });
                                         },
                                         child: Container(
@@ -821,6 +833,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                         onTap: () {
                                           setState(() {
                                             selectedTimeIndex2 = i;
+                                            DeliveryTime = times2[i];
+                                            print(DeliveryTime);
                                           });
                                         },
                                         child: Container(
@@ -931,7 +945,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                               Container(
                                                 width: double.infinity,
                                                 height:
-                                                    mQuery.size.height * 0.12,
+                                                    mQuery.size.height * 0.18,
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 12),
                                                 decoration: BoxDecoration(
@@ -960,7 +974,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                               0.032,
                                                         ),
                                                         Text(
-                                                          "Pickup from ${aselectedAddress}",
+                                                          "Pickup from ${AddBook[0]['Type']}",
                                                           style: TextStyle(
                                                             fontSize: mQuery
                                                                     .size
@@ -996,20 +1010,24 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                   .size.width *
                                                               0.065,
                                                         ),
-                                                        Text(
-                                                          "$caddress" != null &&
-                                                                  "$caddress" !=
-                                                                      ""
-                                                              ? "$caddress"
-                                                              : "B-702, Sarthak the Sarjak",
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: mQuery
-                                                                    .size
-                                                                    .height *
-                                                                0.0183,
-                                                            fontFamily:
-                                                                'SatoshiMedium',
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.8,
+                                                          child: Text(
+                                                            "${AddBook[0]['Floor']}\n${AddBook[0]['Caddress']}\nHow to Reach : ${AddBook[0]['HTReach']}",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: mQuery
+                                                                      .size
+                                                                      .height *
+                                                                  0.0183,
+                                                              fontFamily:
+                                                                  'SatoshiMedium',
+                                                            ),
                                                           ),
                                                         )
                                                       ],
@@ -1244,6 +1262,21 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                             child: TextField(
                                                               controller:
                                                                   extranoteController,
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState() {
+                                                                  ExtraNotes =
+                                                                      value;
+                                                                  print(value);
+                                                                }
+                                                              },
+                                                              onSubmitted:
+                                                                  (value) {
+                                                                setState() {
+                                                                  ExtraNotes =
+                                                                      value;
+                                                                }
+                                                              },
                                                               cursorColor:
                                                                   Colors
                                                                       .black54,
@@ -1348,6 +1381,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                           () {
                                                                         selectedContainerIndex =
                                                                             0;
+                                                                        SupportRider =
+                                                                            '10';
                                                                       });
                                                                     },
                                                                   ),
@@ -1367,6 +1402,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                           () {
                                                                         selectedContainerIndex =
                                                                             1;
+                                                                        SupportRider =
+                                                                            '20';
                                                                       });
                                                                     },
                                                                   ),
@@ -1386,6 +1423,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                                           () {
                                                                         selectedContainerIndex =
                                                                             2;
+                                                                        SupportRider =
+                                                                            '30';
                                                                       });
                                                                     },
                                                                   ),
@@ -1676,11 +1715,36 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
-                                                    return PaymentPage();
-                                                  }));
+                                                  print(
+                                                      'Cart Items : $CartItems');
+                                                  print(
+                                                      'Pickup Date : $PickupDate');
+                                                  print(
+                                                      'Pickup Time : $PickupTime');
+                                                  print(
+                                                      'Delivery Date : $DeliveryDate');
+                                                  print(
+                                                      'Delivery Time : $DeliveryTime');
+                                                  print(
+                                                      'Address Type : ${AddBook[0]['Type']}');
+                                                  print(
+                                                      'Address Floor : ${AddBook[0]['Floor']}');
+                                                  print(
+                                                      'Confirm Address : ${AddBook[0]['Caddress']}');
+                                                  print(
+                                                      'How to reach : ${AddBook[0]['HTReach']}');
+                                                  print(
+                                                      'Extra note : $ExtraNotes');
+                                                  print(
+                                                      'Support your rider : $SupportRider');
+
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return PaymentConfirmation();
+                                                    },
+                                                  );
                                                 },
                                                 child: Column(
                                                   children: [
@@ -1987,6 +2051,172 @@ class ContainerItem extends StatelessWidget {
               color: isSelected ? Colors.white : Colors.black,
               fontFamily: 'SatoshiMedium'),
         ),
+      ),
+    );
+  }
+}
+
+class PaymentConfirmation extends StatefulWidget {
+  const PaymentConfirmation({super.key});
+
+  @override
+  State<PaymentConfirmation> createState() => _PaymentConfirmationState();
+}
+
+class _PaymentConfirmationState extends State<PaymentConfirmation> {
+  int isSelected = 1;
+  Razorpay? _razorpay;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay?.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay?.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay?.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay?.clear();
+  }
+
+  void openPaymentPortal() async {
+    int cost = FinalTotalCost * 100;
+    var options = {
+      'key': 'rzp_test_vmbrZlOLty7Hqy',
+      'amount': cost,
+      'name': 'jhon',
+      'description': 'Payment',
+      'prefill': {'contact': '9555873774', 'email': 'jhon@razorpay.com'},
+      'external': {
+        'wallets': ['paytm'],
+      }
+    };
+
+    try {
+      _razorpay?.open(options);
+      print("Making payment");
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print(response.paymentId);
+    Fluttertoast.showToast(
+        msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR HERE: ${response.code} - ${response.message}",
+        timeInSecForIosWeb: 4);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET IS : ${response.walletName}",
+        timeInSecForIosWeb: 4);
+  }
+
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.35,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+
+      // Customize your bottom sheet content here
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected == 1 ? Color(0xff29b2fe) : Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(10)),
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: ListTile(
+              leading: Icon(
+                Icons.wallet,
+                color: isSelected == 1 ? Color(0xff29b2fe) : Colors.black,
+              ),
+              title: Text(
+                'Cleaneo Wallet',
+                style: TextStyle(
+                    color: isSelected == 1 ? Color(0xff29b2fe) : Colors.black),
+              ),
+              onTap: () {
+                setState(() {
+                  isSelected = 1;
+                });
+              },
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected == 2 ? Color(0xff29b2fe) : Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(10)),
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: ListTile(
+              leading: Icon(
+                Icons.payment,
+                color: isSelected == 2 ? Color(0xff29b2fe) : Colors.black,
+              ),
+              title: Text(
+                'Pay using UPI, Net Banking and Debit & Credit Cards',
+                style: TextStyle(
+                    color: isSelected == 2 ? Color(0xff29b2fe) : Colors.black),
+              ),
+              onTap: () {
+                setState(() {
+                  isSelected = 2;
+                });
+                // Navigate to the PaymentPage if needed
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage()));
+              },
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          SizedBox(
+            child: GestureDetector(
+              onTap: () {
+                openPaymentPortal();
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return PaymentPage();
+                // }));
+              },
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.07,
+                width: MediaQuery.of(context).size.width * 0.9,
+                decoration: BoxDecoration(
+                    color: Color(0xff29b2fe),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Center(
+                  child: Text(
+                    'Continue Payment',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ] // Add more options as needed
+            ),
       ),
     );
   }

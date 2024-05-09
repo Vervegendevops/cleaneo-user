@@ -1,6 +1,7 @@
 import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/quantity_wise_page.dart';
 import 'package:cleaneo_user/Payment/payment_page.dart';
+import 'package:cleaneo_user/Payment/razorpay.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

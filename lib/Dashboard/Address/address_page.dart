@@ -1,9 +1,20 @@
+import 'dart:convert';
+
 import 'package:cleaneo_user/Dashboard/Address/deliveryInstructions_page.dart';
 import 'package:cleaneo_user/Dashboard/home_page.dart';
 import 'package:cleaneo_user/Global/global.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+String Floor = '';
+String Caddress = '';
+String Type = '';
+String HTReach = '';
+List<dynamic> AddBook = [];
 
 class AddressPage extends StatefulWidget {
   const AddressPage({Key? key}) : super(key: key);
@@ -26,6 +37,32 @@ class _AddressPageState extends State<AddressPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedAddressIndex', index);
     await prefs.setString('selectedAddress', address);
+  }
+
+  bool isfetched = false;
+  Future<Object> fetchAddress() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/showAddress/${UserData.read('ID')}';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        AddBook = jsonDecode(response.body);
+      });
+
+      print(AddBook[0]["Type"]); // Decode the response
+    } else {
+      // OTP = (1000 + Random().nextInt(9000)).toString();
+    }
+    return true;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAddress();
   }
 
   String aselectedAddress = "Home";
@@ -134,168 +171,218 @@ class _AddressPageState extends State<AddressPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: mQuery.size.height * 0.02,
-                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: mQuery.size.width * 0.045),
                         child: Column(
                           children: [
                             Container(
-                              width: double.infinity,
-                              height: mQuery.size.height * 0.192,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: mQuery.size.width * 0.04),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 0.2,
-                                    blurRadius: 7,
-                                    offset: Offset(0, 0),
-                                  ),
-                                ],
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: mQuery.size.height * 0.01,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          width: mQuery.size.width * 0.055,
-                                          height: mQuery.size.height * 0.04,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color(0xff29b2fe)),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.home,
-                                              color: Colors.white,
-                                              size: mQuery.size.width * 0.04,
+                              height: MediaQuery.of(context).size.height * 0.8,
+                              child: ListView.builder(
+                                itemCount: AddBook.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Column(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.192,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              spreadRadius: 0.2,
+                                              blurRadius: 7,
+                                              offset: Offset(0, 0),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                        SizedBox(
-                                          width: mQuery.size.width * 0.032,
-                                        ),
-                                        Text(
-                                          AddressBook[0]["Type"],
-                                          style: TextStyle(
-                                              fontSize:
-                                                  mQuery.size.height * 0.0185,
-                                              fontFamily: 'SatoshiBold'),
-                                        ),
-                                        Expanded(child: SizedBox()),
-                                        // Container(
-                                        //   width: mQuery.size.width * 0.04,
-                                        //   height: mQuery.size.height * 0.05,
-                                        //   decoration: BoxDecoration(
-                                        //       color: Color(0xff29b2fe),
-                                        //       shape: BoxShape.circle),
-                                        //   child: Center(
-                                        //     child: Icon(
-                                        //       Icons.check,
-                                        //       color: Colors.white,
-                                        //       size: mQuery.size.width * 0.03,
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        SizedBox(
-                                          width: mQuery.size.width * 0.028,
-                                        ),
-                                        Icon(
-                                          Icons.edit,
-                                          color: Colors.black54,
-                                        ),
-                                        SizedBox(
-                                          width: mQuery.size.width * 0.028,
-                                        ),
-                                        Icon(
-                                          Icons.delete,
-                                          color: Colors.black54,
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Column(
+                                        child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              '${AddressBook[0]["Floor"]},',
-                                              style: TextStyle(
-                                                  fontSize: mQuery.size.height *
-                                                      0.015,
-                                                  color: Colors.black54,
-                                                  fontFamily: 'SatoshiRegular'),
+                                            SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.01),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.055,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.04,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color(0xff29b2fe),
+                                                  ),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.home,
+                                                      color: Colors.white,
+                                                      size:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.04,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.032),
+                                                Text(
+                                                  AddBook[index]["Type"] != null
+                                                      ? AddBook[index]["Type"]
+                                                      : '',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.0185,
+                                                    fontFamily: 'SatoshiBold',
+                                                  ),
+                                                ),
+                                                Expanded(child: SizedBox()),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.028),
+                                                Icon(Icons.edit,
+                                                    color: Colors.black54),
+                                                SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.028),
+                                                Icon(Icons.delete,
+                                                    color: Colors.black54),
+                                              ],
                                             ),
-                                            Text(
-                                              '${AddressBook[0]["address"]},',
-                                              style: TextStyle(
-                                                  fontSize: mQuery.size.height *
-                                                      0.015,
-                                                  color: Colors.black54,
-                                                  fontFamily: 'SatoshiRegular'),
-                                            ),
-                                            Text(
-                                              'How to reach : ${AddressBook[0]["How to reach"]},',
-                                              style: TextStyle(
-                                                  fontSize: mQuery.size.height *
-                                                      0.015,
-                                                  color: Colors.black54,
-                                                  fontFamily: 'SatoshiRegular'),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: mQuery.size.height * 0.023,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: mQuery.size.width * 0.14),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return DeliveryInstructionPage();
-                                          }));
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              "View Delivery Instructions",
-                                              style: TextStyle(
-                                                  color: Color(0xff29b2fe),
-                                                  fontFamily: 'SatoshiBold',
-                                                  fontSize: mQuery.size.height *
-                                                      0.018),
+                                            SizedBox(height: 10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${AddBook[index]["Floor"] != null ? AddBook[index]["Floor"] : ''},',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.015,
+                                                    color: Colors.black54,
+                                                    fontFamily:
+                                                        'SatoshiRegular',
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${AddBook[index]["Caddress"] != null ? AddBook[index]["Caddress"] : ''},',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.015,
+                                                    color: Colors.black54,
+                                                    fontFamily:
+                                                        'SatoshiRegular',
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'How to reach : ${AddBook[index]["HTReach"] != null ? AddBook[index]["HTReach"] : ''},',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.015,
+                                                    color: Colors.black54,
+                                                    fontFamily:
+                                                        'SatoshiRegular',
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             SizedBox(
-                                              width: mQuery.size.width * 0.02,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.023),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.14),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return DeliveryInstructionPage();
+                                                  }));
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "View Delivery Instructions",
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0xff29b2fe),
+                                                        fontFamily:
+                                                            'SatoshiBold',
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.018,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.02),
+                                                    Icon(
+                                                      Icons.arrow_right,
+                                                      color: Color(0xff29b2fe),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                            Icon(
-                                              Icons.arrow_right,
-                                              color: Color(0xff29b2fe),
-                                            )
                                           ],
                                         ),
                                       ),
-                                    )
-                                  ],
-                                ),
+                                      SizedBox(
+                                        height: mQuery.size.height * 0.02,
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -324,6 +411,65 @@ class _AddAddressState extends State<AddAddress> {
   TextEditingController addressController = TextEditingController();
   TextEditingController floorController = TextEditingController();
   TextEditingController reachController = TextEditingController();
+  Future<void> saveAddress() async {
+    // Define the API endpoint
+    String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/AddAddress';
+    print(Caddress);
+    print(Floor);
+    // Create the request body
+    Map<String, String> requestBody = {
+      'ID': UserData.read('ID').toString(),
+      'Floor': Floor,
+      'Caddress': Caddress,
+      'Type': Type,
+      'HTReach': HTReach,
+    };
+
+    // Convert the request body to JSON format
+    String jsonBody = jsonEncode(requestBody);
+
+    try {
+      // Make the POST request
+      http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+
+      // Check if the request was successful (status code 200)
+      if (response.statusCode == 200) {
+        print('Adress Saved succesfully');
+        fetchAddress();
+        Navigator.pop(context);
+
+        // You can handle the response here if needed
+      } else {
+        // Handle error if the request was not successful
+        print('Failed to sign up. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request
+      print('Error signing up: $e');
+    }
+  }
+
+  Future<Object> fetchAddress() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/showAddress/CleaneoUser000012';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        AddBook = jsonDecode(response.body);
+      });
+      print(AddressBook); // Decode the response
+    } else {
+      // OTP = (1000 + Random().nextInt(9000)).toString();
+    }
+    return true;
+  }
+
   final List<String> addresses = [
     "Home",
     "Work",
@@ -392,48 +538,52 @@ class _AddAddressState extends State<AddAddress> {
                         fontFamily: 'SatoshiRegular',
                         color: Colors.black54),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/check-mark.png",
-                          width: 16,
-                        ),
-                        SizedBox(
-                          width: mQuery.size.width * 0.02,
-                        ),
-                        Container(
-                          width: 250,
-                          child: TextField(
-                            controller: addressController,
-                            style: TextStyle(fontFamily: 'SatoshiMedium'),
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration(
-                              focusColor: Colors.grey,
-                              border: InputBorder.none,
-                              hintMaxLines: 1,
-                            ),
-                            onChanged: (value) {
-                              setState(() {});
-                            },
+                  Row(
+                    children: [
+                      Image.asset(
+                        "assets/images/check-mark.png",
+                        width: 16,
+                      ),
+                      SizedBox(
+                        width: mQuery.size.width * 0.02,
+                      ),
+                      Container(
+                        width: 250,
+                        child: TextField(
+                          controller: addressController,
+                          onSubmitted: (value) {
+                            setState(() {
+                              Caddress = value;
+                            });
+                          },
+                          style: TextStyle(fontFamily: 'SatoshiMedium'),
+                          cursorColor: Colors.grey,
+                          decoration: InputDecoration(
+                            focusColor: Colors.grey,
+                            border: InputBorder.none,
+                            hintMaxLines: 1,
                           ),
+                          onChanged: (value) {
+                            setState(() {
+                              Caddress = value;
+                            });
+                          },
                         ),
-                        // 66666666
+                      ),
+                      // 66666666
 
-                        // Text(
-                        //   "CHANGE",
-                        //   style: TextStyle(
-                        //     color: Colors.red,
-                        //     fontFamily:
-                        //         'SatoshiMedium',
-                        //     fontSize:
-                        //         mQuery.size.height *
-                        //             0.0173,
-                        //   ),
-                        // ),
-                      ],
-                    ),
+                      // Text(
+                      //   "CHANGE",
+                      //   style: TextStyle(
+                      //     color: Colors.red,
+                      //     fontFamily:
+                      //         'SatoshiMedium',
+                      //     fontSize:
+                      //         mQuery.size.height *
+                      //             0.0173,
+                      //   ),
+                      // ),
+                    ],
                   ),
                   Divider(
                     color: Colors.grey,
@@ -448,6 +598,16 @@ class _AddAddressState extends State<AddAddress> {
                   ),
                   TextField(
                     controller: floorController,
+                    onSubmitted: (value) {
+                      setState(() {
+                        Floor = value;
+                      });
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        Floor = value;
+                      });
+                    },
                     style: TextStyle(fontFamily: 'SatoshiMedium'),
                     cursorColor: Colors.grey,
                     decoration: InputDecoration(
@@ -474,6 +634,16 @@ class _AddAddressState extends State<AddAddress> {
                   ),
                   TextField(
                     controller: reachController,
+                    onChanged: (value) {
+                      setState(() {
+                        HTReach = value;
+                      });
+                    },
+                    onSubmitted: (value) {
+                      setState(() {
+                        HTReach = value;
+                      });
+                    },
                     style: TextStyle(fontFamily: 'SatoshiMedium'),
                     cursorColor: Colors.grey,
                     decoration: InputDecoration(
@@ -516,6 +686,7 @@ class _AddAddressState extends State<AddAddress> {
                             setState(() {
                               selectedAddressIndex = i;
                               aselectedAddress = addresses[i];
+                              Type = aselectedAddress;
                               _saveSelectedAddress(i,
                                   addresses[i]); // Update the selected address
                             });
@@ -561,7 +732,10 @@ class _AddAddressState extends State<AddAddress> {
                       //     MaterialPageRoute(builder: (context) {
                       //   return AddressPage();
                       // }));
-                      Navigator.pop(context);
+                      saveAddress();
+                      print(UserID);
+                      print(Floor);
+                      // Navigator.pop(context);
                     },
                     child: Container(
                       width: double.infinity,

@@ -4,14 +4,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PaymentPage extends StatefulWidget {
-  const PaymentPage({Key? key}) : super(key: key);
+class PaymentPage2 extends StatefulWidget {
+  const PaymentPage2({Key? key}) : super(key: key);
 
   @override
-  State<PaymentPage> createState() => _PaymentPageState();
+  State<PaymentPage2> createState() => _PaymentPage2State();
 }
 
-class _PaymentPageState extends State<PaymentPage> {
+class _PaymentPage2State extends State<PaymentPage2> {
   void _launchURL() async {
     const String googlePayPackageName = 'com.google.android.apps.walletnfcrel';
 

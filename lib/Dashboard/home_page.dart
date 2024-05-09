@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
 import 'package:cleaneo_user/Dashboard/Notifications/notification_page.dart';
 import 'package:cleaneo_user/Dashboard/Orders/yourOrders_page.dart';
 import 'package:cleaneo_user/Dashboard/Wallet/wallet_page.dart';
@@ -14,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:http/http.dart' as http;
 import 'bottomNavigationBar.dart';
 
 final authentication = GetStorage();
@@ -27,6 +30,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<Object> fetchAddress() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/showAddress/${UserData.read('ID')}';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        AddBook = jsonDecode(response.body);
+      });
+
+      print(AddBook); // Decode the response
+    } else {
+      // OTP = (1000 + Random().nextInt(9000)).toString();
+    }
+    return true;
+  }
+
   int _selectedIndex = 0;
   var orderNo = 3;
   int selectedContainerIndex = 0;
@@ -155,6 +176,13 @@ class _HomePageState extends State<HomePage> {
     } else {
       return averagePriceVendors;
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAddress();
   }
 
   @override

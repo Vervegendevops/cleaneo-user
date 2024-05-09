@@ -519,6 +519,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return Dialog(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       child: Container(
                                                         width: MediaQuery.of(
                                                                 context)
@@ -528,7 +530,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.7, // full height
+                                                            0.5, // full height
                                                         decoration:
                                                             BoxDecoration(
                                                           color: Colors
@@ -589,6 +591,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return Dialog(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       child: Container(
                                                         width: MediaQuery.of(
                                                                 context)
@@ -598,11 +602,11 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.7, // full height
+                                                            0.5, // full height
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: Colors
-                                                              .transparent,
+                                                          color: Color.fromARGB(
+                                                              0, 41, 32, 31),
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(8),
@@ -613,7 +617,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                                   ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
                                                                   : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
                                                             ),
-                                                            fit: BoxFit.fill,
+                                                            fit: BoxFit.contain,
                                                           ),
                                                         ),
                                                       ),
@@ -657,6 +661,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return Dialog(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       child: Container(
                                                         width: MediaQuery.of(
                                                                 context)
@@ -666,7 +672,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.7, // full height
+                                                            0.5, // full height
                                                         decoration:
                                                             BoxDecoration(
                                                           color: Colors
@@ -704,6 +710,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                           ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.jpg"
                                                           : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/1.png",
                                                     ),
+                                                    fit: BoxFit.contain,
                                                     onError: (exception,
                                                         stackTrace) {
                                                       // If loading imageUrl1 fails, fallback to imageUrl2
@@ -727,6 +734,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return Dialog(
+                                                      backgroundColor:
+                                                          Colors.transparent,
                                                       child: Container(
                                                         width: MediaQuery.of(
                                                                 context)
@@ -736,7 +745,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.7, // full height
+                                                            0.5, // full height
                                                         decoration:
                                                             BoxDecoration(
                                                           color: Colors
@@ -751,7 +760,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                                   ? "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.jpg"
                                                                   : "https://drycleaneo.com/CleaneoVendor/storage/images/${widget.vendorID}/storepicture/2.png",
                                                             ),
-                                                            fit: BoxFit.fill,
+                                                            fit: BoxFit.contain,
                                                           ),
                                                         ),
                                                       ),

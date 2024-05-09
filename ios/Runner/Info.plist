@@ -10,6 +10,11 @@
 <string>Access to photos is required for XYZ feature.</string>
 <key>NSFileProviderDomainUsageDescription</key>
 <string>Access to files is required for XYZ feature.</string>
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>sms</string>
+  <string>tel</string>
+</array>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
