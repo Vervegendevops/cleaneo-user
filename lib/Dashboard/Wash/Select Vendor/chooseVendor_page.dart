@@ -211,7 +211,7 @@ class _ChooseVendorPageState extends State<ChooseVendorPage> {
                                   ),
                                   SizedBox(width: mQuery.size.width * 0.02),
                                   Text(
-                                    vendor['name'],
+                                    vendor['store_name'],
                                     style: TextStyle(
                                       fontSize: mQuery.size.height * 0.016,
                                       fontWeight: FontWeight.w700,
@@ -402,6 +402,7 @@ class _ChooseVendorPageState extends State<ChooseVendorPage> {
                                           MaterialPageRoute(builder: (context) {
                                         return WashPage(
                                           id: vendor['ID'],
+                                          vendorAddress: vendor['address'],
                                         );
                                       }));
                                     },

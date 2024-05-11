@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:cleaneo_user/Dashboard/Address/deliveryInstructions_page.dart';
+import 'package:cleaneo_user/Dashboard/Address/selectLocation.dart';
 import 'package:cleaneo_user/Dashboard/home_page.dart';
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,7 +53,7 @@ class _AddressPageState extends State<AddressPage> {
         AddBook = jsonDecode(response.body);
       });
 
-      print(AddBook[0]["Type"]); // Decode the response
+      // print(AddBook[0]["Type"]); // Decode the response
     } else {
       // OTP = (1000 + Random().nextInt(9000)).toString();
     }
@@ -74,326 +76,342 @@ class _AddressPageState extends State<AddressPage> {
     var address = "B-702, Sarthak the Sarjak, Bhaijipura Chokdi \n "
         "PDPU Crossroad , Beside Pulse Mall, Seventh \n "
         "Floor , Kudasan, Gujrat, India";
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: MyDrawer(),
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Color(0xff006acb),
-        ),
-        child: Column(
-          children: [
-            SizedBox(height: mQuery.size.height * 0.034),
-            Padding(
-              padding: EdgeInsets.only(
-                top: mQuery.size.height * 0.058,
-                bottom: mQuery.size.height * 0.03,
-                left: mQuery.size.width * 0.045,
-                right: mQuery.size.width * 0.045,
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _scaffoldKey.currentState!.openDrawer();
-                    },
-                    child: Icon(
-                      Icons.menu,
-                      color: Colors.white,
-                      size: mQuery.size.height * 0.04,
-                    ),
-                  ),
-                  SizedBox(
-                    width: mQuery.size.width * 0.045,
-                  ),
-                  Text(
-                    "My Addresses",
-                    style: TextStyle(
-                        fontSize: mQuery.size.height * 0.027,
-                        color: Colors.white,
-                        fontFamily: 'SatoshiBold'),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16)),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return HomePage();
+        }));
+        return false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: MyDrawer(),
+        body: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Color(0xff006acb),
+          ),
+          child: Column(
+            children: [
+              SizedBox(height: mQuery.size.height * 0.034),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: mQuery.size.height * 0.058,
+                  bottom: mQuery.size.height * 0.03,
+                  left: mQuery.size.width * 0.045,
+                  right: mQuery.size.width * 0.045,
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AddAddress();
-                              },
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                width: mQuery.size.width * 0.045,
-                                height: mQuery.size.height * 0.05,
-                                decoration: BoxDecoration(
-                                    color: Color(0xff29b2fe),
-                                    shape: BoxShape.circle),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: mQuery.size.width * 0.04,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        _scaffoldKey.currentState!.openDrawer();
+                      },
+                      child: Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                        size: mQuery.size.height * 0.04,
+                      ),
+                    ),
+                    SizedBox(
+                      width: mQuery.size.width * 0.045,
+                    ),
+                    Text(
+                      "My Addresses",
+                      style: TextStyle(
+                          fontSize: mQuery.size.height * 0.027,
+                          color: Colors.white,
+                          fontFamily: 'SatoshiBold'),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AddAddress();
+                                },
+                              ).then((value) => setState(() {
+                                    fetchAddress();
+                                  }));
+                            },
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: mQuery.size.width * 0.045,
+                                  height: mQuery.size.height * 0.05,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff29b2fe),
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: mQuery.size.width * 0.04,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: mQuery.size.width * 0.02,
-                              ),
-                              Text(
-                                "Add Address",
-                                style: TextStyle(
-                                    fontSize: mQuery.size.height * 0.0195,
-                                    fontFamily: 'SatoshiBold'),
-                              )
-                            ],
+                                SizedBox(
+                                  width: mQuery.size.width * 0.02,
+                                ),
+                                Text(
+                                  "Add Address",
+                                  style: TextStyle(
+                                      fontSize: mQuery.size.height * 0.0195,
+                                      fontFamily: 'SatoshiBold'),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: mQuery.size.width * 0.045),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.8,
-                              child: ListView.builder(
-                                itemCount: AddBook.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.192,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.5),
-                                              spreadRadius: 0.2,
-                                              blurRadius: 7,
-                                              offset: Offset(0, 0),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.01),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.055,
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: mQuery.size.width * 0.045),
+                          child: Column(
+                            children: [
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                child: ListView.builder(
+                                  itemCount: AddBook.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.5),
+                                                spreadRadius: 0.2,
+                                                blurRadius: 7,
+                                                offset: Offset(0, 0),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
                                                   height: MediaQuery.of(context)
                                                           .size
                                                           .height *
-                                                      0.04,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Color(0xff29b2fe),
+                                                      0.01),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.055,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.04,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Color(0xff29b2fe),
+                                                    ),
+                                                    child: Center(
+                                                      child: Icon(
+                                                        Icons.home,
+                                                        color: Colors.white,
+                                                        size: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.04,
+                                                      ),
+                                                    ),
                                                   ),
-                                                  child: Center(
-                                                    child: Icon(
-                                                      Icons.home,
-                                                      color: Colors.white,
-                                                      size:
+                                                  SizedBox(
+                                                      width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.04,
+                                                              0.032),
+                                                  Text(
+                                                    AddBook[index]["Type"] !=
+                                                            null
+                                                        ? AddBook[index]["Type"]
+                                                        : '',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.0185,
+                                                      fontFamily: 'SatoshiBold',
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.032),
-                                                Text(
-                                                  AddBook[index]["Type"] != null
-                                                      ? AddBook[index]["Type"]
-                                                      : '',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.0185,
-                                                    fontFamily: 'SatoshiBold',
+                                                  Expanded(child: SizedBox()),
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.028),
+                                                  Icon(Icons.edit,
+                                                      color: Colors.black54),
+                                                  SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.028),
+                                                  Icon(Icons.delete,
+                                                      color: Colors.black54),
+                                                ],
+                                              ),
+                                              SizedBox(height: 10),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${AddBook[index]["Floor"] != null ? AddBook[index]["Floor"] : ''},',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.015,
+                                                      color: Colors.black54,
+                                                      fontFamily:
+                                                          'SatoshiRegular',
+                                                    ),
                                                   ),
-                                                ),
-                                                Expanded(child: SizedBox()),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.028),
-                                                Icon(Icons.edit,
-                                                    color: Colors.black54),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.028),
-                                                Icon(Icons.delete,
-                                                    color: Colors.black54),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${AddBook[index]["Floor"] != null ? AddBook[index]["Floor"] : ''},',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.015,
-                                                    color: Colors.black54,
-                                                    fontFamily:
-                                                        'SatoshiRegular',
+                                                  Text(
+                                                    '${AddBook[index]["Caddress"] != null ? AddBook[index]["Caddress"] : ''},',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.015,
+                                                      color: Colors.black54,
+                                                      fontFamily:
+                                                          'SatoshiRegular',
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  '${AddBook[index]["Caddress"] != null ? AddBook[index]["Caddress"] : ''},',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.015,
-                                                    color: Colors.black54,
-                                                    fontFamily:
-                                                        'SatoshiRegular',
+                                                  Text(
+                                                    'How to reach : ${AddBook[index]["HTReach"] != null ? AddBook[index]["HTReach"] : ''},',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.015,
+                                                      color: Colors.black54,
+                                                      fontFamily:
+                                                          'SatoshiRegular',
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  'How to reach : ${AddBook[index]["HTReach"] != null ? AddBook[index]["HTReach"] : ''},',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.015,
-                                                    color: Colors.black54,
-                                                    fontFamily:
-                                                        'SatoshiRegular',
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.023),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: MediaQuery.of(context)
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                  height: MediaQuery.of(context)
                                                           .size
-                                                          .width *
-                                                      0.14),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) {
-                                                    return DeliveryInstructionPage();
-                                                  }));
-                                                },
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      "View Delivery Instructions",
-                                                      style: TextStyle(
+                                                          .height *
+                                                      0.023),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.14),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return DeliveryInstructionPage();
+                                                    }));
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "View Delivery Instructions",
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0xff29b2fe),
+                                                          fontFamily:
+                                                              'SatoshiBold',
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.018,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                      Icon(
+                                                        Icons.arrow_right,
                                                         color:
                                                             Color(0xff29b2fe),
-                                                        fontFamily:
-                                                            'SatoshiBold',
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.018,
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                                    Icon(
-                                                      Icons.arrow_right,
-                                                      color: Color(0xff29b2fe),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                              SizedBox(
+                                                height: 20,
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: mQuery.size.height * 0.02,
-                                      ),
-                                    ],
-                                  );
-                                },
+                                        SizedBox(
+                                          height: mQuery.size.height * 0.02,
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -439,9 +457,11 @@ class _AddAddressState extends State<AddAddress> {
       // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
         print('Adress Saved succesfully');
-        fetchAddress();
         Navigator.pop(context);
-
+        // Navigator.pushReplacement(context,
+        //     MaterialPageRoute(builder: (context) {
+        //   return AddressPage();
+        // }));
         // You can handle the response here if needed
       } else {
         // Handle error if the request was not successful
@@ -480,6 +500,13 @@ class _AddAddressState extends State<AddAddress> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedAddressIndex', index);
     await prefs.setString('selectedAddress', address);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Caddress = '';
   }
 
   String aselectedAddress = "Home";
@@ -538,52 +565,68 @@ class _AddAddressState extends State<AddAddress> {
                         fontFamily: 'SatoshiRegular',
                         color: Colors.black54),
                   ),
-                  Row(
-                    children: [
-                      Image.asset(
-                        "assets/images/check-mark.png",
-                        width: 16,
-                      ),
-                      SizedBox(
-                        width: mQuery.size.width * 0.02,
-                      ),
-                      Container(
-                        width: 250,
-                        child: TextField(
-                          controller: addressController,
-                          onSubmitted: (value) {
-                            setState(() {
-                              Caddress = value;
-                            });
-                          },
-                          style: TextStyle(fontFamily: 'SatoshiMedium'),
-                          cursorColor: Colors.grey,
-                          decoration: InputDecoration(
-                            focusColor: Colors.grey,
-                            border: InputBorder.none,
-                            hintMaxLines: 1,
+                  Container(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SearchLocationScreen();
+                        })).then((value) => setState(() {
+                              Caddress = Caddress;
+                            }));
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            "assets/images/check-mark.png",
+                            width: 16,
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              Caddress = value;
-                            });
-                          },
-                        ),
-                      ),
-                      // 66666666
+                          SizedBox(
+                            width: mQuery.size.width * 0.02,
+                          ),
+                          Container(
+                            width: 250,
+                            child: TextField(
+                              enabled: false,
+                              controller: addressController,
+                              onSubmitted: (value) {
+                                setState(() {
+                                  Caddress = value;
+                                });
+                              },
+                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                              cursorColor: Colors.grey,
+                              decoration: InputDecoration(
+                                hintText: Caddress == ''
+                                    ? 'Enter your address'
+                                    : Caddress,
+                                focusColor: Colors.grey,
+                                border: InputBorder.none,
+                                hintMaxLines: 1,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  Caddress = value;
+                                });
+                              },
+                            ),
+                          ),
+                          // 66666666
 
-                      // Text(
-                      //   "CHANGE",
-                      //   style: TextStyle(
-                      //     color: Colors.red,
-                      //     fontFamily:
-                      //         'SatoshiMedium',
-                      //     fontSize:
-                      //         mQuery.size.height *
-                      //             0.0173,
-                      //   ),
-                      // ),
-                    ],
+                          // Text(
+                          //   "CHANGE",
+                          //   style: TextStyle(
+                          //     color: Colors.red,
+                          //     fontFamily:
+                          //         'SatoshiMedium',
+                          //     fontSize:
+                          //         mQuery.size.height *
+                          //             0.0173,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
                   ),
                   Divider(
                     color: Colors.grey,

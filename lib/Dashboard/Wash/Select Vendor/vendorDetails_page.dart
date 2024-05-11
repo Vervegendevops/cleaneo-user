@@ -28,6 +28,9 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
         setState(() {
           Map<String, dynamic> data = json.decode(response.body);
           String selectedServiceString = data['selectedService'];
+
+          vendorListDynamic = data;
+
           // Remove brackets and split the string to get individual services
           List<String> selectedServiceList = selectedServiceString
               .substring(1, selectedServiceString.length - 1) // Remove brackets
@@ -262,10 +265,12 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                vendorListDynamic['name'] ==
+                                                vendorListDynamic[
+                                                            'store_name'] ==
                                                         null
                                                     ? 'Loading'
-                                                    : vendorListDynamic['name'],
+                                                    : vendorListDynamic[
+                                                        'store_name'],
                                                 style: TextStyle(
                                                     fontFamily: 'SatoshiBold',
                                                     fontSize:

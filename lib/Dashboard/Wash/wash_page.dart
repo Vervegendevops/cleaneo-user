@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
+import 'package:cleaneo_user/Dashboard/testing/orderSubmission.dart';
+import 'package:cleaneo_user/Dashboard/testing/orderSummary.dart';
 import 'package:cleaneo_user/Dashboard/testing/quantity.dart';
 import 'package:cleaneo_user/Dashboard/testing/weight.dart';
 import 'package:cleaneo_user/Global/global.dart';
@@ -16,8 +18,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/byweight_page.dart';
-import 'package:cleaneo_user/Dashboard/Wash/quantity_wise_page.dart';
-import 'package:cleaneo_user/pages/dryclean_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -36,7 +36,8 @@ List<String> serviceList = [
 
 class WashPage extends StatefulWidget {
   final String id;
-  WashPage({Key? key, required this.id});
+  final String vendorAddress;
+  WashPage({Key? key, required this.id, required this.vendorAddress});
 
   @override
   State<WashPage> createState() => _WashPageState();
@@ -118,6 +119,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     FinalTotalCost = 0;
+    print("vendor address : ${widget.vendorAddress}");
     fetchResponse(UserData.read('phone'));
     _saveAddress(addressController.text);
     // updateC();
@@ -318,7 +320,13 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _openBottomSheet(context);
+                              if (FinalTotalCost >= 0 &&
+                                  FinalTotalCost <= 349) {
+                                Fluttertoast.showToast(
+                                    msg: "Please add items worth ₹350");
+                              } else {
+                                _openBottomSheet(context);
+                              }
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -489,6 +497,10 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
   }
 
   void _openBottomSheet(BuildContext context) {
+    PickupDate = '';
+    PickupTime = '';
+    DeliveryDate = '';
+    DeliveryTime = '';
     DateTime currentTime = DateTime.now();
     DateTime tenAM = DateTime(
         DateTime.now().year, DateTime.now().month, DateTime.now().day, 10, 0);
@@ -930,970 +942,27 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                           ),
                           SizedBox(height: mQuery.size.height * 0.02),
                           GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return StatefulBuilder(
-                                    builder: (context, setState) {
-                                      return Container(
-                                        height: mQuery.size.height * 0.8,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(16),
-                                                topRight: Radius.circular(16)),
-                                            color: Colors.white),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                height:
-                                                    mQuery.size.height * 0.03,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16),
-                                                child: Text(
-                                                  "Order Summary",
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        mQuery.size.height *
-                                                            0.022,
-                                                    fontFamily: 'SatoshiBold',
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    mQuery.size.height * 0.02,
-                                              ),
-                                              Container(
-                                                width: double.infinity,
-                                                height:
-                                                    mQuery.size.height * 0.18,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 12),
-                                                decoration: BoxDecoration(
-                                                    color: Color(0xffebf7ed)),
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: Color(
-                                                                0xff009c1a),
-                                                          ),
-                                                          child: Icon(
-                                                            Icons.check,
-                                                            color: Colors.white,
-                                                            size: 12,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: mQuery
-                                                                  .size.width *
-                                                              0.032,
-                                                        ),
-                                                        Text(
-                                                          "Pickup from ${AddBook[0]['Type']}",
-                                                          style: TextStyle(
-                                                            fontSize: mQuery
-                                                                    .size
-                                                                    .height *
-                                                                0.0183,
-                                                            fontFamily:
-                                                                'SatoshiMedium',
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                            child: SizedBox()),
-                                                        TextButton(
-                                                          onPressed: () {},
-                                                          child: Text(
-                                                            "CHANGE",
-                                                            style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontFamily:
-                                                                  'SatoshiMedium',
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0183,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          width: mQuery
-                                                                  .size.width *
-                                                              0.065,
-                                                        ),
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.8,
-                                                          child: Text(
-                                                            "${AddBook[0]['Floor']}\n${AddBook[0]['Caddress']}\nHow to Reach : ${AddBook[0]['HTReach']}",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0183,
-                                                              fontFamily:
-                                                                  'SatoshiMedium',
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    mQuery.size.height * 0.015,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      "Clothes Detail",
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            mQuery.size.height *
-                                                                0.02,
-                                                        fontFamily:
-                                                            'SatoshiMedium',
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    mQuery.size.height * 0.02,
-                                              ),
-                                              SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                      width: double.infinity,
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.4,
-                                                      margin:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
-                                                        color: Colors.white,
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.grey
-                                                                .withOpacity(
-                                                                    0.5),
-                                                            spreadRadius: 0.2,
-                                                            blurRadius: 7,
-                                                            offset:
-                                                                Offset(0, 0),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SizedBox(
-                                                              height: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.015),
-
-                                                          SizedBox(
-                                                              height: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.012),
-                                                          Expanded(
-                                                            child: ListView
-                                                                .builder(
-                                                              itemCount:
-                                                                  CartItems
-                                                                      .length,
-                                                              itemBuilder:
-                                                                  (BuildContext
-                                                                          context,
-                                                                      int index) {
-                                                                double
-                                                                    pricePerKg =
-                                                                    // double.parse(CartItems[index]
-                                                                    //         [
-                                                                    //         "price"]
-                                                                    //     .split(
-                                                                    //         " ")[1]);
-                                                                    200;
-                                                                double
-                                                                    totalCost =
-                                                                    // kgValues[
-                                                                    //         index] *
-                                                                    //     pricePerKg;
-                                                                    300;
-
-                                                                return Column(
-                                                                  children: [
-                                                                    buildItemContainer(
-                                                                      mQuery,
-                                                                      CartItems[
-                                                                              index]
-                                                                          [
-                                                                          'type'],
-                                                                      CartItems[
-                                                                              index]
-                                                                          [
-                                                                          "name"],
-                                                                      CartItems[
-                                                                              index]
-                                                                          [
-                                                                          "price"],
-                                                                      CartItems[
-                                                                              index]
-                                                                          [
-                                                                          'quantity'],
-                                                                      () {
-                                                                        setState(
-                                                                            () {
-                                                                          kgValues[
-                                                                              index] = kgValues[index] >
-                                                                                  0
-                                                                              ? kgValues[index] - 1
-                                                                              : 0;
-                                                                        });
-                                                                      },
-                                                                      () {
-                                                                        setState(
-                                                                            () {
-                                                                          kgValues[
-                                                                              index]++;
-                                                                          calculateTotalKgValue();
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                    // Container(
-                                                                    //   padding: EdgeInsets.only(
-                                                                    //       right:
-                                                                    //           28),
-                                                                    //   child:
-                                                                    //       Row(
-                                                                    //     mainAxisAlignment:
-                                                                    //         MainAxisAlignment.end,
-                                                                    //     children: [
-                                                                    //       Text(
-                                                                    //         '₹ .toStringAsFixed(0)}',
-                                                                    //         style:
-                                                                    //             TextStyle(
-                                                                    //           fontSize: mQuery.size.height * 0.0173,
-                                                                    //           fontFamily: 'SatoshiMedium',
-                                                                    //           color: Color(0xff29b2fe),
-                                                                    //         ),
-                                                                    //       ),
-                                                                    //     ],
-                                                                    //   ),
-                                                                    // ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 10),
-                                                          //////   Text("Hello Flutter",)/////
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.02,
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 16),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Text("Extra Note",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'SatoshiMedium',
-                                                                    fontSize: mQuery
-                                                                            .size
-                                                                            .height *
-                                                                        0.02,
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.02,
-                                                          ),
-                                                          Container(
-                                                            width:
-                                                                double.infinity,
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.16,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          6),
-                                                              color:
-                                                                  Colors.white,
-                                                              boxShadow: [
-                                                                BoxShadow(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .withOpacity(
-                                                                          0.5),
-                                                                  spreadRadius:
-                                                                      0.2,
-                                                                  blurRadius: 7,
-                                                                  offset:
-                                                                      Offset(
-                                                                          0, 0),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            child: TextField(
-                                                              controller:
-                                                                  extranoteController,
-                                                              onChanged:
-                                                                  (value) {
-                                                                ExtraNotes =
-                                                                    value;
-                                                                print(value);
-                                                              },
-                                                              onSubmitted:
-                                                                  (value) {
-                                                                ExtraNotes =
-                                                                    value;
-                                                                print(value);
-                                                              },
-                                                              cursorColor:
-                                                                  Colors
-                                                                      .black54,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                      border: InputBorder
-                                                                          .none,
-                                                                      hintText:
-                                                                          "Write message here",
-                                                                      contentPadding: EdgeInsets.only(
-                                                                          left:
-                                                                              16,
-                                                                          right:
-                                                                              6),
-                                                                      hintStyle:
-                                                                          TextStyle(
-                                                                        color: Colors
-                                                                            .black54,
-                                                                        fontFamily:
-                                                                            'SatoshiMedium',
-                                                                        fontSize:
-                                                                            mQuery.size.height *
-                                                                                0.02,
-                                                                      )),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.025,
-                                                    ),
-                                                    Container(
-                                                      width: double.infinity,
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.27,
-                                                      color: Color(0xfff8feff),
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16),
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                height: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.016,
-                                                              ),
-                                                              Text(
-                                                                "Support your Rider",
-                                                                style: TextStyle(
-                                                                    fontSize: mQuery
-                                                                            .size
-                                                                            .height *
-                                                                        0.02,
-                                                                    fontFamily:
-                                                                        'SatoshiMedium'),
-                                                              ),
-                                                              SizedBox(
-                                                                height: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.007,
-                                                              ),
-                                                              Text(
-                                                                "Support your valet and make their day! 100% of your tip will "
-                                                                "be transferred to your valet.",
-                                                                style: TextStyle(
-                                                                    fontSize: mQuery
-                                                                            .size.height *
-                                                                        0.0173,
-                                                                    fontFamily:
-                                                                        'SatoshiRegular',
-                                                                    color: Colors
-                                                                        .black54),
-                                                              ),
-                                                              SizedBox(
-                                                                height: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.02,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  ContainerItem(
-                                                                    text:
-                                                                        "+ ₹ 10",
-                                                                    isSelected:
-                                                                        selectedContainerIndex ==
-                                                                            0,
-                                                                    onTap: () {
-                                                                      if (selectedContainerIndex !=
-                                                                          0) {
-                                                                        setState(
-                                                                            () {
-                                                                          selectedContainerIndex =
-                                                                              0;
-                                                                          SupportRider =
-                                                                              '10';
-                                                                          GrandTotalCost =
-                                                                              FinalTotalCost + 10;
-                                                                          // print(
-                                                                          //     selectedContainerIndex);
-                                                                        });
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width: mQuery
-                                                                              .size
-                                                                              .width *
-                                                                          0.036),
-                                                                  ContainerItem(
-                                                                    text:
-                                                                        "+ ₹ 20",
-                                                                    isSelected:
-                                                                        selectedContainerIndex ==
-                                                                            1,
-                                                                    onTap: () {
-                                                                      if (selectedContainerIndex !=
-                                                                          1) {
-                                                                        setState(
-                                                                            () {
-                                                                          selectedContainerIndex =
-                                                                              1;
-                                                                          SupportRider =
-                                                                              '20';
-                                                                          GrandTotalCost =
-                                                                              FinalTotalCost + 20;
-                                                                        });
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width: mQuery
-                                                                              .size
-                                                                              .width *
-                                                                          0.036),
-                                                                  ContainerItem(
-                                                                    text:
-                                                                        "+ ₹ 30",
-                                                                    isSelected:
-                                                                        selectedContainerIndex ==
-                                                                            2,
-                                                                    onTap: () {
-                                                                      if (selectedContainerIndex !=
-                                                                          2) {
-                                                                        setState(
-                                                                            () {
-                                                                          selectedContainerIndex =
-                                                                              2;
-                                                                          SupportRider =
-                                                                              '30';
-                                                                          GrandTotalCost =
-                                                                              FinalTotalCost + 30;
-                                                                        });
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(
-                                                                height: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.022,
-                                                              ),
-                                                              Text(
-                                                                "Offers",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'SatoshiMedium',
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.019,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                height: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.0072,
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  SvgPicture
-                                                                      .asset(
-                                                                    "assets/images/promo.svg",
-                                                                    width: 22,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: mQuery
-                                                                            .size
-                                                                            .width *
-                                                                        0.03,
-                                                                  ),
-                                                                  Text(
-                                                                    "Select a promo code",
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontFamily:
-                                                                          'SatoshiMedium',
-                                                                      fontSize: mQuery
-                                                                              .size
-                                                                              .height *
-                                                                          0.019,
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                      child:
-                                                                          SizedBox()),
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      // Navigate to Offers Page
-                                                                    },
-                                                                    child: Text(
-                                                                      "View Offers",
-                                                                      style: TextStyle(
-                                                                          fontFamily:
-                                                                              'SatoshiMedium',
-                                                                          fontSize: mQuery.size.height *
-                                                                              0.0183,
-                                                                          color:
-                                                                              Colors.red),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.023,
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 16),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                "Item Total",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.017,
-                                                                  color: Colors
-                                                                      .black54,
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      SizedBox()),
-                                                              Text(
-                                                                "₹ $FinalTotalCost",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.017,
-                                                                  color: Colors
-                                                                      .black54,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01,
-                                                          ),
-                                                          // DottedLine(
-                                                          //   direction:
-                                                          //       Axis.horizontal,
-                                                          //   alignment:
-                                                          //       WrapAlignment
-                                                          //           .center,
-                                                          //   lineLength:
-                                                          //       double.infinity,
-                                                          //   lineThickness: 1.0,
-                                                          //   dashLength: 4.0,
-                                                          //   dashColor:
-                                                          //       Colors.black54,
-                                                          //   dashRadius: 0.0,
-                                                          //   dashGapLength: 4.0,
-                                                          //   dashGapRadius: 0.0,
-                                                          // ),
-                                                          // SizedBox(
-                                                          //   height: mQuery.size
-                                                          //           .height *
-                                                          //       0.01,
-                                                          // ),
-                                                          // Row(
-                                                          //   children: [
-                                                          //     Text(
-                                                          //       "Delivery Charges",
-                                                          //       style:
-                                                          //           TextStyle(
-                                                          //         fontSize: mQuery
-                                                          //                 .size
-                                                          //                 .height *
-                                                          //             0.017,
-                                                          //         color: Colors
-                                                          //             .black54,
-                                                          //         fontFamily:
-                                                          //             'SatoshiRegular',
-                                                          //       ),
-                                                          //     ),
-                                                          //     Expanded(
-                                                          //         child:
-                                                          //             SizedBox()),
-                                                          //     Text(
-                                                          //       "₹ ${prices["Delivery Charges"]?.toStringAsFixed(2)}",
-                                                          //       style:
-                                                          //           TextStyle(
-                                                          //         fontSize: mQuery
-                                                          //                 .size
-                                                          //                 .height *
-                                                          //             0.017,
-                                                          //         color: Colors
-                                                          //             .black54,
-                                                          //         fontFamily:
-                                                          //             'SatoshiRegular',
-                                                          //       ),
-                                                          //     )
-                                                          //   ],
-                                                          // ),
-                                                          // SizedBox(
-                                                          //   height: mQuery.size
-                                                          //           .height *
-                                                          //       0.01,
-                                                          // ),
-                                                          // DottedLine(
-                                                          //   direction:
-                                                          //       Axis.horizontal,
-                                                          //   alignment:
-                                                          //       WrapAlignment
-                                                          //           .center,
-                                                          //   lineLength:
-                                                          //       double.infinity,
-                                                          //   lineThickness: 1.0,
-                                                          //   dashLength: 4.0,
-                                                          //   dashColor:
-                                                          //       Colors.black54,
-                                                          //   dashRadius: 0.0,
-                                                          //   dashGapLength: 4.0,
-                                                          //   dashGapRadius: 0.0,
-                                                          // ),
-                                                          // SizedBox(
-                                                          //   height: mQuery.size
-                                                          //           .height *
-                                                          //       0.01,
-                                                          // ),
-                                                          // Row(
-                                                          //   children: [
-                                                          //     Text(
-                                                          //       "Tax",
-                                                          //       style:
-                                                          //           TextStyle(
-                                                          //         fontSize: mQuery
-                                                          //                 .size
-                                                          //                 .height *
-                                                          //             0.017,
-                                                          //         color: Colors
-                                                          //             .black54,
-                                                          //         fontFamily:
-                                                          //             'SatoshiRegular',
-                                                          //       ),
-                                                          //     ),
-                                                          //     Expanded(
-                                                          //       child:
-                                                          //           SizedBox(),
-                                                          //     ),
-                                                          //     Text(
-                                                          //       "₹ ${prices["Tax"]?.toStringAsFixed(2)}",
-                                                          //       style:
-                                                          //           TextStyle(
-                                                          //         fontSize: mQuery
-                                                          //                 .size
-                                                          //                 .height *
-                                                          //             0.017,
-                                                          //         color: Colors
-                                                          //             .black54,
-                                                          //         fontFamily:
-                                                          //             'SatoshiRegular',
-                                                          //       ),
-                                                          //     )
-                                                          //   ],
-                                                          // ),
-                                                          Divider(),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                "Grand Total",
-                                                                style: TextStyle(
-                                                                    fontSize: mQuery
-                                                                            .size
-                                                                            .height *
-                                                                        0.02,
-                                                                    fontFamily:
-                                                                        'SatoshiMedium'),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      SizedBox()),
-                                                              Text(
-                                                                '$GrandTotalCost',
-                                                                style: TextStyle(
-                                                                    fontSize: mQuery
-                                                                            .size
-                                                                            .height *
-                                                                        0.02,
-                                                                    color: Color(
-                                                                        0xff29b2fe),
-                                                                    fontFamily:
-                                                                        'SatoshiMedium'),
-                                                              )
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height:
-                                                    mQuery.size.height * 0.02,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  print(
-                                                      'Cart Items : $CartItems');
-                                                  print(
-                                                      'Pickup Date : $PickupDate');
-                                                  print(
-                                                      'Pickup Time : $PickupTime');
-                                                  print(
-                                                      'Delivery Date : $DeliveryDate');
-                                                  print(
-                                                      'Delivery Time : $DeliveryTime');
-                                                  print(
-                                                      'Address Type : ${AddBook[0]['Type']}');
-                                                  print(
-                                                      'Address Floor : ${AddBook[0]['Floor']}');
-                                                  print(
-                                                      'Confirm Address : ${AddBook[0]['Caddress']}');
-                                                  print(
-                                                      'How to reach : ${AddBook[0]['HTReach']}');
-                                                  print(
-                                                      'Extra note : $ExtraNotes');
-                                                  print(
-                                                      'Support your rider : $SupportRider');
-
-                                                  showModalBottomSheet(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return PaymentConfirmation();
-                                                    },
-                                                  );
-                                                },
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                      width: double.infinity,
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.08,
-                                                      margin:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16),
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16),
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Color(0xff29b2fe),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(6)),
-                                                      child: Row(
-                                                        children: [
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                  height: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.012),
-                                                              Text(
-                                                                "TOTAL",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.02,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                '$FinalTotalCost',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontFamily:
-                                                                      'SatoshiRegular',
-                                                                  fontSize: mQuery
-                                                                          .size
-                                                                          .height *
-                                                                      0.02,
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          Expanded(
-                                                              child:
-                                                                  SizedBox()),
-                                                          Text(
-                                                            "Make Payment",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.024,
-                                                                fontFamily:
-                                                                    'SatoshiMedium'),
-                                                          ),
-                                                          SizedBox(
-                                                              width: mQuery.size
-                                                                      .width *
-                                                                  0.02),
-                                                          Icon(
-                                                              Icons.arrow_right,
-                                                              color:
-                                                                  Colors.white)
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.02,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            },
+                            onTap: (PickupDate.isEmpty &&
+                                    DeliveryDate.isEmpty &&
+                                    PickupTime.isEmpty &&
+                                    DeliveryTime.isEmpty)
+                                ? () {
+                                    print(PickupDate.isEmpty);
+                                    print(PickupTime.isEmpty);
+                                    print(DeliveryDate.isEmpty);
+                                    print(DeliveryTime.isEmpty);
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Select Pickup and Delivery Slots.");
+                                  }
+                                : () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return OrderSummary(
+                                          id: widget.id,
+                                          vendorAddress: widget.vendorAddress);
+                                    }));
+                                  },
                             child: Column(
                               children: [
                                 Container(
@@ -1910,39 +979,36 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                             CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
-                                              height:
-                                                  mQuery.size.height * 0.012),
-                                          Text(
-                                            "ITEMS",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'SatoshiRegular',
-                                                fontSize:
-                                                    mQuery.size.height * 0.02),
+                                            height: mQuery.size.height * 0.012,
                                           ),
-                                          Text(
-                                            "₹ 1,220 plus taxes",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'SatoshiRegular',
-                                              fontSize:
-                                                  mQuery.size.height * 0.02,
-                                            ),
-                                          )
+                                          Text("${lengthOfCart} ITEMS",
+                                              style: TextStyle(
+                                                fontSize:
+                                                    mQuery.size.height * 0.0195,
+                                                color: Colors.white,
+                                              )),
+                                          Text("₹ $FinalTotalCost plus taxes",
+                                              style: TextStyle(
+                                                  fontFamily: 'SatoshiMedium',
+                                                  fontSize: mQuery.size.height *
+                                                      0.0195,
+                                                  color: Colors.white))
                                         ],
                                       ),
                                       Expanded(child: SizedBox()),
-                                      Text(
-                                        "Continue",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize:
-                                                mQuery.size.height * 0.024,
-                                            fontFamily: 'SatoshiMedium'),
+                                      Text("Continue",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize:
+                                                  mQuery.size.height * 0.024,
+                                              fontFamily: 'SatoshiMedium')),
+                                      SizedBox(
+                                        width: mQuery.size.width * 0.02,
                                       ),
-                                      SizedBox(width: mQuery.size.width * 0.02),
-                                      Icon(Icons.arrow_right,
-                                          color: Colors.white)
+                                      Icon(
+                                        Icons.arrow_right,
+                                        color: Colors.white,
+                                      )
                                     ],
                                   ),
                                 ),
@@ -2023,12 +1089,17 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(width: mQuery.size.width * 0.026),
-          Text(
-            "$kgValue",
-            style: TextStyle(
-                color: Color(0xff29b2fe),
-                fontFamily: 'SatoshiRegular',
-                fontSize: mQuery.size.height * 0.024),
+          Container(
+            width: 40,
+            child: Center(
+              child: Text(
+                "$kgValue",
+                style: TextStyle(
+                    color: Color(0xff29b2fe),
+                    fontFamily: 'SatoshiRegular',
+                    fontSize: mQuery.size.height * 0.024),
+              ),
+            ),
           ),
           SizedBox(width: mQuery.size.width * 0.026),
           InkWell(
@@ -2101,7 +1172,9 @@ class ContainerItem extends StatelessWidget {
 }
 
 class PaymentConfirmation extends StatefulWidget {
-  const PaymentConfirmation({super.key});
+  String id;
+
+  PaymentConfirmation({super.key, required this.id});
 
   @override
   State<PaymentConfirmation> createState() => _PaymentConfirmationState();
@@ -2124,6 +1197,49 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
   void dispose() {
     super.dispose();
     _razorpay?.clear();
+  }
+
+  Future<void> createOrder() async {
+    // Define the API endpoint
+    String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/createOrder';
+
+    // Create the request body
+    Map<String, String> requestBody = {
+      'VendorId': '${widget.id}',
+      'Items': jsonEncode(CartItems),
+      'PickupDate': PickupDate,
+      'PickupTime': PickupTime,
+      'DeliveryDate': DeliveryDate,
+      'DeliveryTime': DeliveryTime,
+      'ExtraNote': ExtraNotes,
+      'SupportYourRider': SupportRider,
+      'DeliveryCharges': '${DeliveryCharge.toInt()}',
+      'UserTotalCost': '$GrandTotalCostWithDelivery',
+      'PaymentMode': paymentMode,
+    };
+    print(requestBody);
+
+    // Convert the request body to JSON format
+    String jsonBody = jsonEncode(requestBody);
+
+    try {
+      // Make the POST request
+      http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+      if (response.statusCode == 200) {
+        print('Order created successful');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return OrderSubmittedSuccessfully();
+        }));
+      } else {
+        print('Failed to sign up. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error signing up: $e');
+    }
   }
 
   void openPaymentPortal() async {
@@ -2213,6 +1329,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                   : () {
                       setState(() {
                         isSelectedd = 1;
+                        paymentMode = 'Wallet';
                       });
                     },
             ),
@@ -2240,6 +1357,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
               onTap: () {
                 setState(() {
                   isSelectedd = 3;
+                  paymentMode = 'Cash';
                 });
               },
             ),
@@ -2267,6 +1385,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
               onTap: () {
                 setState(() {
                   isSelectedd = 2;
+                  paymentMode = 'Online';
                 });
                 // Navigate to the PaymentPage if needed
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage()));
@@ -2286,7 +1405,20 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                         msg: "Insufficient Balance!", timeInSecForIosWeb: 4);
                   }
                 } else if (isSelectedd == 3) {
-                  print('Cash on delivery');
+                  print('Vendor id : ${widget.id}');
+                  // print('Vendor Address : ${widget.vendorAddress}');
+                  print('Cart Items : ${jsonEncode(CartItems)}');
+                  print('Pickup Date : $PickupDate');
+                  print('Pickup Time : $PickupTime');
+                  print('Delivery Date : $DeliveryDate');
+                  print('Delivery Time : $DeliveryTime');
+                  print(DeliveryCharge.toInt());
+                  print('Extra note : $ExtraNotes');
+                  print('Support your rider : $SupportRider');
+                  print('Grand Total : $GrandTotalCostWithDelivery');
+
+                  print(paymentMode);
+                  createOrder();
                 } else if (isSelectedd == 2) {
                   openPaymentPortal();
                 }

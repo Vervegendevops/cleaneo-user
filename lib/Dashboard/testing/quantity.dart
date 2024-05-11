@@ -79,12 +79,17 @@ class _quantityPageState extends State<quantityPage> {
             ),
           ),
           SizedBox(width: mQuery.size.width * 0.026),
-          Text(
-            "$kgValuee",
-            style: TextStyle(
-                color: Color(0xff29b2fe),
-                fontFamily: 'SatoshiRegular',
-                fontSize: mQuery.size.height * 0.024),
+          Container(
+            width: 30,
+            child: Center(
+              child: Text(
+                "$kgValuee",
+                style: TextStyle(
+                    color: Color(0xff29b2fe),
+                    fontFamily: 'SatoshiRegular',
+                    fontSize: mQuery.size.height * 0.024),
+              ),
+            ),
           ),
           SizedBox(width: mQuery.size.width * 0.026),
           InkWell(
@@ -204,7 +209,7 @@ class _quantityPageState extends State<quantityPage> {
                       int itemIndex = CartItems.indexWhere((cartItem) =>
                           cartItem["name"] == item["name"] &&
                           cartItem["type"] == selectedService);
-                      if (CartItems[itemIndex]["quantity"] == 1) {
+                      if (CartItems[itemIndex]["quantity"] == 0) {
                         // If item exists in CartItems, increase its quantity
                         setState(() {
                           widget.TypeofData == 'Wash'
@@ -314,9 +319,9 @@ class _quantityPageState extends State<quantityPage> {
                                           : Shoe_and_Bag_Care_kgValues[index]++;
                       lengthOfCart++;
                       Map<String, dynamic> newItemm = {
-                        "type": selectedService,
-                        "name": item["name"],
-                        "price": item["price"],
+                        "type": "$selectedService",
+                        "name": "${item["name"]}",
+                        "price": "${item["price"]}",
                         "quantity": widget.TypeofData == 'Wash'
                             ? wash_kgValues[index]
                             : widget.TypeofData == 'Wash and Iron'

@@ -1,5 +1,9 @@
-import 'package:cleaneo_user/pages/mydrawer.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+List<Map<String, dynamic>> activeMainOffers = [];
 
 class OffersPage extends StatefulWidget {
   const OffersPage({Key? key}) : super(key: key);
@@ -10,26 +14,53 @@ class OffersPage extends StatefulWidget {
 
 class _OffersPageState extends State<OffersPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<Map<String, dynamic>> offers = [
-    {
-      "title": "CLEANEO 1234",
-      "use": "USE",
-      "conditions": [
-        "One place one time use",
-        "Your discount will be credited within 24 hrs in your wallet",
-        "One place one time use",
-        "Your discount will be credited within 24 hrs in your wallet"
-      ]
-    },
-    // Add more offers here if needed
-  ];
+  List<Map<String, dynamic>> offers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Call your API to fetch offers data
+    fetchOffers();
+  }
+
+  Future<void> fetchOffers() async {
+    // Replace this URL with your actual API endpoint
+    var apiUrl = 'https://drycleaneo.com/cleaneomain/api/allCoupons';
+
+    try {
+      var response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        // Decode the response JSON
+        var responseData = json.decode(response.body);
+        setState(() {
+          offers = List<Map<String, dynamic>>.from(responseData);
+          activeMainOffers =
+              offers.where((offer) => offer['status'] == 'online').toList();
+          print(activeMainOffers);
+        });
+      } else {
+        // Handle error, maybe show a snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load offers'),
+          ),
+        );
+      }
+    } catch (error) {
+      // Handle error, maybe show a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $error'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var mQuery = MediaQuery.of(context);
     return Scaffold(
       key: _scaffoldKey,
-      drawer: MyDrawer(),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -82,18 +113,19 @@ class _OffersPageState extends State<OffersPage> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
-                    top: mQuery.size.height * 0.028,
                     left: mQuery.size.width * 0.045,
                     right: mQuery.size.width * 0.045,
                   ),
-                  child: Column(
-                    children: [
-                      _buildOfferContainer(mQuery, offers[0]),
-                      SizedBox(height: mQuery.size.height * 0.03),
-                      _buildOfferContainer(mQuery, offers[0]),
-                      SizedBox(height: mQuery.size.height * 0.03),
-                      _buildOfferContainer(mQuery, offers[0]),
-                    ],
+                  child: ListView.builder(
+                    itemCount: offers
+                        .where((offer) => offer['status'] == 'online')
+                        .length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final onlineOffers = offers
+                          .where((offer) => offer['status'] == 'online')
+                          .toList();
+                      return _buildOfferContainer(mQuery, onlineOffers[index]);
+                    },
                   ),
                 ),
               ),
@@ -106,22 +138,24 @@ class _OffersPageState extends State<OffersPage> {
 
   Widget _buildOfferContainer(
       MediaQueryData mQuery, Map<String, dynamic> offer) {
-    return Container(
-      width: double.infinity,
-      height: mQuery.size.height * 0.2,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 0,
-            blurRadius: 6,
-            offset: Offset(0, 0),
-          )
-        ],
-      ),
-      child: SingleChildScrollView(
+    // Parse offer data and build UI
+    // For example, you can access offer["coupon_code"], offer["discount"], etc.
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 0,
+              blurRadius: 6,
+              offset: Offset(0, 0),
+            )
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -133,24 +167,35 @@ class _OffersPageState extends State<OffersPage> {
               color: Color(0xffe9f7ff),
               child: Row(
                 children: [
-                  Text(
-                    offer["title"],
-                    style: TextStyle(
-                        fontFamily: 'SatoshiBold',
-                        fontSize: mQuery.size.height * 0.0165),
+                  Row(
+                    children: [
+                      Text(
+                        "Coupon Code : ",
+                        style: TextStyle(
+                            fontFamily: 'SatoshiBold',
+                            fontSize: mQuery.size.height * 0.014),
+                      ),
+                      Text(
+                        offer["coupon_code"],
+                        style: TextStyle(
+                            fontFamily: 'SatoshiBold',
+                            color: Colors.green,
+                            fontSize: mQuery.size.height * 0.015),
+                      ),
+                    ],
                   ),
                   Expanded(child: SizedBox()),
                   Text(
-                    offer["use"],
+                    offer["discount"],
                     style: TextStyle(
                         color: Color(0xff29b2fe),
-                        fontFamily: 'SatoshiMedium',
+                        fontFamily: 'SatoshiBold',
                         fontSize: mQuery.size.height * 0.016),
                   )
                 ],
               ),
             ),
-            SizedBox(height: mQuery.size.height * 0.01),
+            SizedBox(height: mQuery.size.height * 0.012),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -159,20 +204,42 @@ class _OffersPageState extends State<OffersPage> {
                       horizontal: mQuery.size.width * 0.02),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${offer["discount"]} OFF",
+                            style: TextStyle(
+                              fontSize: mQuery.size.height * 0.025,
+                              color: Colors.black,
+                              fontFamily: 'SatoshiBold',
+                            ),
+                          ),
+                          SizedBox(height: mQuery.size.height * 0.005),
+                          Text(
+                            "Valid Upto ${offer["end_date"]}",
+                            style: TextStyle(
+                              fontSize: mQuery.size.height * 0.014,
+                              color: Colors.black,
+                              fontFamily: 'SatoshiMedium',
+                            ),
+                          ),
+                          SizedBox(height: mQuery.size.height * 0.005),
+                        ],
+                      ),
+
                       Text(
-                        "TERMS & CONDITIONS",
+                        "On orders above ₹${offer["minimum_value"]}",
                         style: TextStyle(
-                          fontSize: mQuery.size.height * 0.0162,
-                          color: Colors.black54,
-                          fontFamily: 'SatoshiRegular',
+                          fontSize: mQuery.size.height * 0.014,
+                          color: Colors.black,
+                          fontFamily: 'SatoshiMedium',
                         ),
                       ),
-                      SizedBox(height: mQuery.size.height * 0.013),
-                      for (var condition in offer["conditions"]) ...[
-                        _buildConditionRow(mQuery, condition),
-                        SizedBox(height: mQuery.size.height * 0.004),
-                      ],
+                      SizedBox(height: mQuery.size.height * 0.01),
+                      // Add more details from the offer map here
                     ],
                   ),
                 ),
@@ -180,29 +247,6 @@ class _OffersPageState extends State<OffersPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildConditionRow(MediaQueryData mQuery, String text) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          Container(
-            width: mQuery.size.width * 0.03,
-            height: mQuery.size.height * 0.013,
-            decoration:
-                BoxDecoration(shape: BoxShape.circle, color: Color(0xff29b2fe)),
-          ),
-          SizedBox(width: mQuery.size.width * 0.006),
-          Text(
-            text,
-            style: TextStyle(
-                fontFamily: 'SatoshiMedium',
-                fontSize: mQuery.size.height * 0.0137),
-          )
-        ],
       ),
     );
   }
