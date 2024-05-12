@@ -1200,11 +1200,14 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
   }
 
   Future<void> createOrder() async {
+    String userID = UserData.read('ID');
+    print(userID);
     // Define the API endpoint
     String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/createOrder';
 
     // Create the request body
     Map<String, String> requestBody = {
+      'userID': userID,
       'VendorId': '${widget.id}',
       'Items': jsonEncode(CartItems),
       'PickupDate': PickupDate,
@@ -1217,11 +1220,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
       'UserTotalCost': '$GrandTotalCostWithDelivery',
       'PaymentMode': paymentMode,
     };
-    print(requestBody);
 
     // Convert the request body to JSON format
     String jsonBody = jsonEncode(requestBody);
-
+    print(jsonBody);
     try {
       // Make the POST request
       http.Response response = await http.post(
@@ -1232,10 +1234,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
       if (response.statusCode == 200) {
         print('Order created successful');
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return OrderSubmittedSuccessfully();
+          return OrderPlaced();
         }));
       } else {
-        print('Failed to sign up. Status code: ${response.statusCode}');
+        print('Failed to Create Order. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error signing up: $e');

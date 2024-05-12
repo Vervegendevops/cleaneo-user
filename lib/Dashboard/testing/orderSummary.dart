@@ -642,6 +642,7 @@ class _OrderSummaryState extends State<OrderSummary> {
             ),
             GestureDetector(
               onTap: () {
+                print('User Id : ${UserData.read('ID')}');
                 print('Vendor id : ${widget.id}');
                 print('Vendor Address : ${widget.vendorAddress}');
                 print('Cart Items : ${jsonEncode(CartItems)}');
@@ -691,7 +692,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                               ),
                             ),
                             Text(
-                              '$FinalTotalCost',
+                              '$GrandTotalCostWithDelivery',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'SatoshiRegular',

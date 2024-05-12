@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Map/enableLocation.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/services.dart'; // Import for HapticFeedback
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:io';
 import 'package:get_storage/get_storage.dart'; // Import dart:io for exit function
+import 'package:http/http.dart' as http;
 
 String auth = '';
 String OTP = '';
@@ -21,11 +24,36 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  Future<Object> fetchResponse() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/termscondition/terms_conditions';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // Decode the response
+        print(response.body);
+
+        return response.body == 'true';
+      } else {
+        // If the response status code is not 200, throw an exception or handle
+        // the error accordingly.
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      print('Error fetching data: $e');
+      return false; // Return false in case of an error.
+    }
+  }
+
   double _opacity = 0.1;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    fetchResponse();
     Future.delayed(Duration.zero, () {
       setState(() {
         _opacity = 1.0;
