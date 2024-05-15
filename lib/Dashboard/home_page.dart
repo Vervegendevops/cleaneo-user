@@ -7,10 +7,8 @@ import 'package:cleaneo_user/Dashboard/Orders/yourOrders_page.dart';
 import 'package:cleaneo_user/Dashboard/Wallet/wallet_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/vendorDetails_page.dart';
-import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/donate.dart';
-import 'package:cleaneo_user/pages/dryclean_page.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
 import 'package:cleaneo_user/pages/myprofile.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +49,6 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   var orderNo = 3;
   int selectedContainerIndex = 0;
-  String userName = authentication.read('Authentication') == 'Guest'
-      ? "Guest"
-      : UserData.read('name');
 
   TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> gridItems = [
@@ -329,7 +324,9 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: [
                         Text(
-                          userName,
+                          UserData.read('name') != null
+                              ? UserData.read('name')
+                              : 'loading',
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'SatoshiBold',

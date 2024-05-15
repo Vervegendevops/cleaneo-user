@@ -136,8 +136,6 @@ class _OrderSummaryState extends State<OrderSummary> {
   }
 
   Future<void> dis() async {
-    print(
-        'https://drycleaneo.com/CleaneoUser/api/distance?address1=${widget.vendorAddress}&address2=${AddBook[0]['Caddress']}');
     final response = await http.get(Uri.parse(
         'https://drycleaneo.com/CleaneoUser/api/distance?address1=${widget.vendorAddress}&address2=${AddBook[0]['Caddress']}'));
     if (response.statusCode == 200) {
@@ -161,7 +159,9 @@ class _OrderSummaryState extends State<OrderSummary> {
     if (response.statusCode == 200) {
       setState(() {
         AddBook = jsonDecode(response.body);
-        dis();
+        if (AddBook.length > 0) {
+          dis();
+        }
       });
 
       // print(AddBook[0]["Type"]); // Decode the response
@@ -654,7 +654,11 @@ class _OrderSummaryState extends State<OrderSummary> {
                 print('Extra note : $ExtraNotes');
                 print('Support your rider : $SupportRider');
                 print('Grand Total : $GrandTotalCostWithDelivery');
-
+                if (AddBook.length > 0)
+                  print('Address : ${AddBook[0]['Caddress']}');
+                if (AddBook.length > 0) print('Floor : ${AddBook[0]['Floor']}');
+                if (AddBook.length > 0)
+                  print('How to reach : ${AddBook[0]['HTReach']}');
                 showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {

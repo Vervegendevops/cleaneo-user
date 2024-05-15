@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //hello
     UserData.write('UserData', '');
     return MaterialApp(
       debugShowCheckedModeBanner: false,

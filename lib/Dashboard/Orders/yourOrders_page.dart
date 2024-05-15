@@ -1,11 +1,41 @@
+import 'dart:convert';
 import 'package:cleaneo_user/Dashboard/Orders/ongoingOrders_page.dart';
 import 'package:cleaneo_user/Dashboard/Orders/previousOrders_page.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
 
+// List<Map<String, dynamic>> orders = [];
 final authentication = GetStorage();
+// Future<List<Map<String, dynamic>>> fetchUserOrders(String userId) async {
+//   final String apiUrl =
+//       'https://drycleaneo.com/CleaneoUser/api/user-orders/$userId';
+
+//   try {
+//     final response = await http.get(Uri.parse(apiUrl));
+
+//     if (response.statusCode == 200) {
+//       // Parse JSON response directly into a list of maps
+//       final List<dynamic> jsonData = json.decode(response.body);
+
+//       // Convert JSON data to a list of maps
+//       List<Map<String, dynamic>> orders =
+//           List<Map<String, dynamic>>.from(jsonData);
+//       print(orders);
+//       print("---------------");
+//       return orders;
+//     } else {
+//       // make a listview builder
+//       // If the response status code is not 200, throw an exception or handle the error accordingly.
+//       throw Exception('Failed to fetch user orders: ${response.statusCode}');
+//     }
+//   } catch (e) {
+//     // Handle exceptions if any occur during the request.
+//     throw Exception('Error fetching user orders: $e');
+//   }
+// }
 
 class YourOrdersPage extends StatefulWidget {
   const YourOrdersPage({Key? key}) : super(key: key);
@@ -86,6 +116,11 @@ class _YourOrdersPageState extends State<YourOrdersPage>
                         ],
                       ),
                     ),
+                    // ElevatedButton(
+                    //     onPressed: () {
+                    //       fetchUserOrders('CleaneoUser000012');
+                    //     },
+                    //     child: Text("mQuery")),
                     Container(
                       width: double.infinity,
                       decoration: const BoxDecoration(
@@ -138,20 +173,10 @@ class _YourOrdersPageState extends State<YourOrdersPage>
                           : TabBarView(
                               controller: _tabController,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: mQuery.size.width * 0.045,
-                                    right: mQuery.size.width * 0.045,
-                                  ),
-                                  child: const OngoingOrdersPage(),
+                                OnGoingOrders(
+                                  userId: 'CleaneoUser000012',
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: mQuery.size.width * 0.045,
-                                    right: mQuery.size.width * 0.045,
-                                  ),
-                                  child: const PreviousOrdersPage(),
-                                ),
+                                const PreviousOrdersPage(),
                               ],
                             ),
                     ),

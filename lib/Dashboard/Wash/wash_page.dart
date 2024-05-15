@@ -33,6 +33,7 @@ List<String> serviceList = [
   "Steam Iron",
   "Shoe and Bag Care"
 ];
+List<String> serviceList2 = [];
 
 class WashPage extends StatefulWidget {
   final String id;
@@ -181,9 +182,30 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                 key != "c_steam_iron" &&
                 key != "c_shoe_bag_care" &&
                 key != "updated_at" &&
+                key != "commission" &&
                 key != "laundry_on_kg") {
               setState(() {
-                keysList.add(key);
+                if (key == 'wash') {
+                  serviceList2.add('Wash');
+                  keysList.add('Wash');
+                } else if (key == 'wash_iron') {
+                  serviceList2.add('Wash and Iron');
+                  keysList.add('Wash and Iron');
+                } else if (key == 'dry_clean') {
+                  serviceList2.add('Dry Clean');
+                  keysList.add('Dry Clean');
+                } else if (key == 'wash_steam') {
+                  serviceList2.add('Wash and Steam');
+                  keysList.add('Wash and Steam');
+                } else if (key == 'steam_iron') {
+                  serviceList2.add('Steam Iron');
+                  keysList.add('Steam Iron');
+                } else if (key == 'shoe_bag_care') {
+                  serviceList2.add('Shoe and Bag Care');
+                  keysList.add('Shoe and Bag Care');
+                }
+
+                print(serviceList2);
               });
               length = keysList.length;
             }
@@ -240,7 +262,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                   child: Row(
                                     children: [
                                       Text(
-                                        serviceList[selectedServiceIndex],
+                                        serviceList2[selectedServiceIndex],
                                         style: TextStyle(
                                             fontSize:
                                                 mQuery.size.height * 0.027,
@@ -418,22 +440,22 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                               ),
                               if (length == 1)
                                 for (int i = 0; i < length; i++)
-                                  _buildDropdownRow(serviceList[i], i),
+                                  _buildDropdownRow(serviceList2[i], i),
                               if (length == 2)
                                 for (int i = 0; i < length; i++)
-                                  _buildDropdownRow(serviceList[i], i),
+                                  _buildDropdownRow(serviceList2[i], i),
                               if (length == 3)
                                 for (int i = 0; i < length; i++)
-                                  _buildDropdownRow(serviceList[i], i),
+                                  _buildDropdownRow(serviceList2[i], i),
                               if (length == 4)
                                 for (int i = 0; i < length; i++)
-                                  _buildDropdownRow(serviceList[i], i),
+                                  _buildDropdownRow(serviceList2[i], i),
                               if (length == 5)
                                 for (int i = 0; i < length; i++)
-                                  _buildDropdownRow(serviceList[i], i),
+                                  _buildDropdownRow(serviceList2[i], i),
                               if (length == 6)
                                 for (int i = 0; i < length; i++)
-                                  _buildDropdownRow(serviceList[i], i)
+                                  _buildDropdownRow(serviceList2[i], i)
                             ],
                           ),
                         ),
@@ -451,7 +473,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
       onTap: () {
         setState(() {
           selectedServiceIndex = index;
-          selectedService = serviceList[selectedServiceIndex];
+          selectedService = serviceList2[selectedServiceIndex];
           _isDropdownOpen = false;
           print(selectedServiceIndex);
           if (selectedService != "Wash") {
@@ -1199,7 +1221,121 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
     _razorpay?.clear();
   }
 
-  Future<void> createOrder() async {
+  Future<void> updateWallet() async {
+    String userID = UserData.read('ID');
+    String actualWallet = UserData.read('Wallet');
+    int ActualWallet = int.parse(actualWallet);
+    ActualWallet = ActualWallet - GrandTotalCostWithDelivery;
+    // Define the API endpoint
+    String apiUrl =
+        'https://drycleaneo.com/CleaneoUser/api/updateWallet?userID=${userID}&amount=$ActualWallet';
+
+    // Create the request body
+    Map<String, String> requestBody = {
+      'userID': userID,
+      'amount': ActualWallet.toString(),
+    };
+
+    // Convert the request body to JSON format
+    String jsonBody = jsonEncode(requestBody);
+    print(jsonBody);
+    try {
+      // Make the POST request
+      http.Response response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        print('Order created successful ${response.body}');
+        transactionDetail();
+        // createOrder();
+      } else {
+        print('Failed to Create Order. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error signing up: $e');
+    }
+  }
+
+  Future<void> transactionDetail() async {
+    String userID = UserData.read('ID');
+    print(userID);
+    String amount = GrandTotalCostWithDelivery.toString();
+    // Define the API endpoint
+    String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/transaction';
+
+    // Create the request body
+    Map<String, String> requestBody = {
+      'UserID': userID,
+      'PayID': 'debit',
+      'Type': 'Wallet',
+      'Amount': amount,
+    };
+
+    // Convert the request body to JSON format
+    String jsonBody = jsonEncode(requestBody);
+    print(jsonBody);
+    try {
+      // Make the POST request
+      http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        createOrder(response.body);
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return OrderPlaced();
+        // }));
+      } else {
+        print('Failed to Create Order. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error signing up: $e');
+    }
+  }
+
+  Future<void> transactionDetail2(String iddit) async {
+    String userID = UserData.read('ID');
+    print(userID);
+    String amount = GrandTotalCostWithDelivery.toString();
+    // Define the API endpoint
+    String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/transaction';
+
+    // Create the request body
+    Map<String, String> requestBody = {
+      'UserID': userID,
+      'PayID': iddit,
+      'Type': 'Online',
+      'Amount': amount,
+    };
+
+    // Convert the request body to JSON format
+    String jsonBody = jsonEncode(requestBody);
+    print(jsonBody);
+    try {
+      // Make the POST request
+      http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+      if (response.statusCode == 200) {
+        print(response.body);
+        createOrder(response.body);
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return OrderPlaced();
+        // }));
+      } else {
+        print('Failed to Create Order. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error signing up: $e');
+    }
+  }
+
+  Future<void> createOrder(String idddd) async {
     String userID = UserData.read('ID');
     print(userID);
     // Define the API endpoint
@@ -1208,6 +1344,9 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
     // Create the request body
     Map<String, String> requestBody = {
       'userID': userID,
+      'HTReach': AddBook[0]['HTReach'],
+      'Floor': AddBook[0]['Floor'],
+      'Caddress': AddBook[0]['Caddress'],
       'VendorId': '${widget.id}',
       'Items': jsonEncode(CartItems),
       'PickupDate': PickupDate,
@@ -1218,7 +1357,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
       'SupportYourRider': SupportRider,
       'DeliveryCharges': '${DeliveryCharge.toInt()}',
       'UserTotalCost': '$GrandTotalCostWithDelivery',
-      'PaymentMode': paymentMode,
+      'PaymentMode': idddd,
     };
 
     // Convert the request body to JSON format
@@ -1247,11 +1386,15 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
   void openPaymentPortal() async {
     int cost = FinalTotalCost * 100;
     var options = {
-      'key': 'rzp_test_vmbrZlOLty7Hqy',
-      'amount': cost,
-      'name': 'jhon',
+      'key': 'rzp_live_ciT70AxpLdSZ9B',
+      // 'amount': cost,
+      'amount': 200,
+      'name': '${UserData.read('name')}',
       'description': 'Payment',
-      'prefill': {'contact': '9555873774', 'email': 'jhon@razorpay.com'},
+      'prefill': {
+        'contact': '${UserData.read('phone')}',
+        'email': '${UserData.read('email')}'
+      },
       'external': {
         'wallets': ['paytm'],
       }
@@ -1267,6 +1410,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print(response.paymentId);
+    print(response.data);
+
+    String tt = response.paymentId.toString();
+    transactionDetail2(tt);
     Fluttertoast.showToast(
         msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
   }
@@ -1405,6 +1552,9 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                     print('less balance');
                     Fluttertoast.showToast(
                         msg: "Insufficient Balance!", timeInSecForIosWeb: 4);
+                  } else {
+                    print('Order Created Successfully');
+                    updateWallet();
                   }
                 } else if (isSelectedd == 3) {
                   print('Vendor id : ${widget.id}');
@@ -1420,7 +1570,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                   print('Grand Total : $GrandTotalCostWithDelivery');
 
                   print(paymentMode);
-                  createOrder();
+                  createOrder('Cash');
                 } else if (isSelectedd == 2) {
                   openPaymentPortal();
                 }

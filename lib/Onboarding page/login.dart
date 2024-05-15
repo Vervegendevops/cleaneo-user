@@ -315,10 +315,10 @@ class _LoginPageState extends State<LoginPage> {
                                             context: context,
                                             builder: (context) {
                                               return Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.5,
+                                                // height: MediaQuery.of(context)
+                                                //         .size
+                                                //         .height *
+                                                //     0.5,
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
@@ -350,7 +350,7 @@ class _LoginPageState extends State<LoginPage> {
                                                           height: 20,
                                                         ),
                                                         Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
+                                                          termsAndConditions,
                                                           style: TextStyle(
                                                               fontSize: mQuery
                                                                       .size
@@ -363,30 +363,6 @@ class _LoginPageState extends State<LoginPage> {
                                                             height: mQuery.size
                                                                     .height *
                                                                 0.01),
-                                                        Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
-                                                          style: TextStyle(
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0165,
-                                                              fontFamily:
-                                                                  'SatoshiMedium'),
-                                                        ),
-                                                        SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01),
-                                                        Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
-                                                          style: TextStyle(
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0165,
-                                                              fontFamily:
-                                                                  'SatoshiMedium'),
-                                                        )
                                                       ],
                                                     ),
                                                   ),
@@ -439,10 +415,6 @@ class _LoginPageState extends State<LoginPage> {
                                             context: context,
                                             builder: (context) {
                                               return Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.5,
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
@@ -474,35 +446,7 @@ class _LoginPageState extends State<LoginPage> {
                                                           height: 20,
                                                         ),
                                                         Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
-                                                          style: TextStyle(
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0165,
-                                                              fontFamily:
-                                                                  'SatoshiMedium'),
-                                                        ),
-                                                        SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01),
-                                                        Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
-                                                          style: TextStyle(
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0165,
-                                                              fontFamily:
-                                                                  'SatoshiMedium'),
-                                                        ),
-                                                        SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01),
-                                                        Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
+                                                          privacy,
                                                           style: TextStyle(
                                                               fontSize: mQuery
                                                                       .size
@@ -566,10 +510,6 @@ class _LoginPageState extends State<LoginPage> {
                                             context: context,
                                             builder: (context) {
                                               return Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.5,
                                                 decoration: const BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
@@ -601,7 +541,7 @@ class _LoginPageState extends State<LoginPage> {
                                                           height: 20,
                                                         ),
                                                         Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
+                                                          contentPolicy,
                                                           style: TextStyle(
                                                               fontSize: mQuery
                                                                       .size
@@ -614,30 +554,6 @@ class _LoginPageState extends State<LoginPage> {
                                                             height: mQuery.size
                                                                     .height *
                                                                 0.01),
-                                                        Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
-                                                          style: TextStyle(
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0165,
-                                                              fontFamily:
-                                                                  'SatoshiMedium'),
-                                                        ),
-                                                        SizedBox(
-                                                            height: mQuery.size
-                                                                    .height *
-                                                                0.01),
-                                                        Text(
-                                                          "Welcome to our demo service! Before you begin using our platform, please read the following Terms of Service carefully. By accessing or using our service, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our service.",
-                                                          style: TextStyle(
-                                                              fontSize: mQuery
-                                                                      .size
-                                                                      .height *
-                                                                  0.0165,
-                                                              fontFamily:
-                                                                  'SatoshiMedium'),
-                                                        )
                                                       ],
                                                     ),
                                                   ),

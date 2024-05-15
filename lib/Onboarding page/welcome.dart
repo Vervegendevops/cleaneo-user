@@ -15,6 +15,10 @@ import 'package:http/http.dart' as http;
 String auth = '';
 String OTP = '';
 final authentication = GetStorage();
+List test = [];
+String termsAndConditions = '';
+String privacy = '';
+String contentPolicy = '';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -24,22 +28,35 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  Future<Object> fetchResponse() async {
-    final url =
+  Future<bool> fetchTermsAndConditions() async {
+    const url0 =
         'https://drycleaneo.com/CleaneoUser/api/termscondition/terms_conditions';
-
+    const url1 =
+        'https://drycleaneo.com/CleaneoUser/api/termscondition/privacyPolicy';
+    const url2 =
+        'https://drycleaneo.com/CleaneoUser/api/termscondition/contentPolicy';
     try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        // Decode the response
-        print(response.body);
-
-        return response.body == 'true';
+      final response0 = await http.get(Uri.parse(url0));
+      final response1 = await http.get(Uri.parse(url1));
+      final response2 = await http.get(Uri.parse(url2));
+      if (response0.statusCode == 200) {
+        final List<dynamic> tandc = json.decode(response0.body);
+        final List<dynamic> privacypolicy = json.decode(response1.body);
+        final List<dynamic> contentpolicy = json.decode(response2.body);
+        if (tandc.isNotEmpty &&
+            privacypolicy.isNotEmpty &&
+            contentpolicy.isNotEmpty) {
+          termsAndConditions = tandc[0];
+          privacy = privacypolicy[0];
+          contentPolicy = contentpolicy[0];
+          print(privacy);
+          return true;
+        } else {
+          print('Error: Invalid data format');
+          return false;
+        }
       } else {
-        // If the response status code is not 200, throw an exception or handle
-        // the error accordingly.
-        throw Exception('Failed to fetch data: ${response.statusCode}');
+        throw Exception('Failed to fetch data: ${response0.statusCode}');
       }
     } catch (e) {
       // Handle exceptions if any occur during the request.
@@ -53,7 +70,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchResponse();
+    fetchTermsAndConditions();
     Future.delayed(Duration.zero, () {
       setState(() {
         _opacity = 1.0;

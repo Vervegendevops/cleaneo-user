@@ -35,7 +35,7 @@ class _MyDrawerState extends State<MyDrawer> {
     var userName = UserData.read('name');
     var phoneNo = authentication.read('Authentication') == 'Guest'
         ? ""
-        : "(+91) 9978997899";
+        : "(+91) ${UserData.read('phone')}";
     return Drawer(
       child: Container(
         width: double.infinity,
@@ -367,28 +367,6 @@ class _MyDrawerState extends State<MyDrawer> {
                               width: mQuery.size.width * 0.06),
                           title: Text(
                             "Wallet",
-                            style: TextStyle(
-                              fontFamily: 'SatoshiMedium',
-                              fontSize: mQuery.size.height * 0.0212,
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return ManageCardsPage();
-                          }));
-                        },
-                        child: ListTile(
-                          leading: Image.asset(
-                              "assets/images/drawer-images/credit-card.png",
-                              color: Color(0xff29b2fe),
-                              width: mQuery.size.width * 0.06),
-                          title: Text(
-                            "Manage Cards",
                             style: TextStyle(
                               fontFamily: 'SatoshiMedium',
                               fontSize: mQuery.size.height * 0.0212,

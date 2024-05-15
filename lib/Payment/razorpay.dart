@@ -1,3 +1,4 @@
+import 'package:cleaneo_user/main.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -29,13 +30,17 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void openPaymentPortal() async {
     var options = {
-      'key': 'rzp_test_vmbrZlOLty7Hqy',
+      'key': 'rzp_live_ciT70AxpLdSZ9B',
       'amount': 200,
-      'name': 'jhon',
+      'name': UserData.read('name'),
       'description': 'Payment',
-      'prefill': {'contact': '9555873774', 'email': 'jhon@razorpay.com'},
+      'prefill': {
+        'contact': '${UserData.read('name')}',
+      },
       'external': {
-        'wallets': ['paytm'],
+        'wallets': [
+          'paytm',
+        ],
       }
     };
 
@@ -49,6 +54,8 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print(response.paymentId);
+    print('payment');
+    print(response.data);
     Fluttertoast.showToast(
         msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
   }

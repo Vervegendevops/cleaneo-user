@@ -58,7 +58,7 @@ class _OTPPageState extends State<OTPPage> {
 
     // Create the request body
     Map<String, String> requestBody = {
-      'id': UserID,
+      'ID': UserID,
       'name': Signupname,
       'email': Signupemail,
       'phone': Signupphone,
@@ -78,6 +78,7 @@ class _OTPPageState extends State<OTPPage> {
       // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
         print('Sign up successful');
+        authentication.write('Authentication', 'login');
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return MapPage();
         }));
