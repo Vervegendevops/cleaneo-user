@@ -73,34 +73,103 @@ class OnGoingOrders extends StatelessWidget {
                         json.decode(order['Items']));
 
                 return Container(
-                  padding: EdgeInsets.all(10),
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    color: Colors.white,
+                    // border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.grey.withOpacity(0.5), // color of the shadow
+                        spreadRadius: 2, // spread radius
+                        blurRadius: 5, // blur radius
+                        offset: Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Order ID: $orderId'),
-                      Text('Pickup Date: $pickupDate'),
-                      Text('Delivery Date: $deliveryDate'),
-                      Text('Delivery Time: $deliveryTime'),
-                      SizedBox(height: 10),
-                      Text(
-                        'Items:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      Container(
+                        width: double.infinity,
+                        height: mQuery.size.height * 0.05,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFE9F8FF),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            topRight: Radius.circular(6),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Order ID: $orderId',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SatoshiBold'),
+                              ),
+                              Text(
+                                '₹ ${order['UserTotalCost']}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SatoshiBold'),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(height: 5),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: items.length > 5 ? 5 : items.length,
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          return Text(
-                            '${item['type']}: ${item['name']} ${item['price']} X${item['quantity']}',
-                          );
-                        },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Details',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'SatoshiBold'),
+                            ),
+                            Text(
+                              'Pickup Date: $pickupDate',
+                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                            ),
+                            Text(
+                              'Delivery Date: $deliveryDate',
+                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                            ),
+                            Text(
+                              'Delivery Time: $deliveryTime',
+                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Show More',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'SatoshiBold'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      /*
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 8.0),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: items.length > 5 ? 5 : items.length,
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            return Text(
+                              '${item['name']} ${item['price']} X${item['quantity']}',
+                            );
+                          },
+                        ),
                       ),
                       if (items.length > 5)
                         TextButton(
@@ -125,6 +194,7 @@ class OnGoingOrders extends StatelessWidget {
                           },
                           child: Text('See More'),
                         ),
+                        */
                     ],
                   ),
                 );

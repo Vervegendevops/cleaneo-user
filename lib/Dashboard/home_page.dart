@@ -7,8 +7,10 @@ import 'package:cleaneo_user/Dashboard/Orders/yourOrders_page.dart';
 import 'package:cleaneo_user/Dashboard/Wallet/wallet_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/chooseVendor_page.dart';
 import 'package:cleaneo_user/Dashboard/Wash/Select%20Vendor/vendorDetails_page.dart';
+import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/donate.dart';
+import 'package:cleaneo_user/pages/dryclean_page.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
 import 'package:cleaneo_user/pages/myprofile.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> bannerAds = [];
+
+  Future<List<Map<String, dynamic>>> fetchBannerAds() async {
+    final String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/allBannerAd/';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+        bannerAds = List<Map<String, dynamic>>.from(
+            jsonData.where((ad) => ad["status"] == "Active"));
+
+        print(response.body);
+        print("---------------*********----------------");
+        return bannerAds;
+      } else {
+        // If the response status code is not 200, throw an exception or handle the error accordingly.
+        throw Exception('Failed to fetch user orders: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      throw Exception('Error fetching user orders: $e');
+    }
+  }
+
   Future<Object> fetchAddress() async {
     final url =
         'https://drycleaneo.com/CleaneoUser/api/showAddress/${UserData.read('ID')}';
@@ -49,6 +77,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   var orderNo = 3;
   int selectedContainerIndex = 0;
+  String userName = authentication.read('Authentication') == 'Guest'
+      ? "Guest"
+      : UserData.read('name');
 
   TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> gridItems = [
@@ -178,6 +209,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     fetchAddress();
+    // fetchUserOrders('CleaneoUser000012');
   }
 
   @override
@@ -324,9 +356,7 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: [
                         Text(
-                          UserData.read('name') != null
-                              ? UserData.read('name')
-                              : 'loading',
+                          userName,
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'SatoshiBold',
@@ -450,62 +480,175 @@ class _HomePageState extends State<HomePage> {
                     itemCount: gridItems.length,
                   ),
                   SizedBox(height: mQuery.size.height * 0.016),
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: mQuery.size.height * 0.16,
-                      viewportFraction: 0.935,
-                      initialPage: 0,
-                      enableInfiniteScroll: true,
-                      reverse: false,
-                      autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 2),
-                      autoPlayAnimationDuration: Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: true,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                    items: dealImages.map((imageName) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Stack(
-                            children: [
-                              Container(
-                                width: mQuery.size.width * 0.935,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  image: DecorationImage(
-                                    image: NetworkImage(imageName),
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              ),
+                  // CarouselSlider(
+                  //   options: CarouselOptions(
+                  //     height: mQuery.size.height * 0.16,
+                  //     viewportFraction: 0.935,
+                  //     initialPage: 0,
+                  //     enableInfiniteScroll: true,
+                  //     reverse: false,
+                  //     autoPlay: true,
+                  //     autoPlayInterval: Duration(seconds: 2),
+                  //     autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  //     autoPlayCurve: Curves.fastOutSlowIn,
+                  //     enlargeCenterPage: true,
+                  //     scrollDirection: Axis.horizontal,
+                  //   ),
+                  //   items: dealImages.map((imageName) {
+                  //     return Builder(
+                  //       builder: (BuildContext context) {
+                  //         return Stack(
+                  //           children: [
+                  //             Container(
+                  //               width: mQuery.size.width * 0.935,
+                  //               decoration: BoxDecoration(
+                  //                 borderRadius: BorderRadius.circular(16),
+                  //                 image: DecorationImage(
+                  //                   image: NetworkImage(imageName),
+                  //                   fit: BoxFit.fill,
+                  //                 ),
+                  //               ),
+                  //             ),
 
-                              // Blue Container
-                              Positioned(
-                                bottom: mQuery.size.height * 0.015,
-                                right: mQuery.size.width * 0.07,
-                                child: Container(
-                                  height: mQuery.size.height * 0.035,
-                                  width: mQuery.size.width * 0.3,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Color(0xff29b2fe)),
-                                  child: Center(
-                                    child: Text(
-                                      "Know More",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'SatoshiBold',
-                                          fontSize: mQuery.size.height * 0.016),
+                  //             // Blue Container
+                  //             Positioned(
+                  //               bottom: mQuery.size.height * 0.015,
+                  //               right: mQuery.size.width * 0.07,
+                  //               child: Container(
+                  //                 height: mQuery.size.height * 0.035,
+                  //                 width: mQuery.size.width * 0.3,
+                  //                 decoration: BoxDecoration(
+                  //                     borderRadius: BorderRadius.circular(6),
+                  //                     color: Color(0xff29b2fe)),
+                  //                 child: Center(
+                  //                   child: Text(
+                  //                     "Know More",
+                  //                     style: TextStyle(
+                  //                         color: Colors.white,
+                  //                         fontFamily: 'SatoshiBold',
+                  //                         fontSize: mQuery.size.height * 0.016),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         );
+                  //       },
+                  //     );
+                  //   }).toList(),
+                  // ),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: fetchBannerAds(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // Show a loading indicator while fetching data
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        List<Map<String, dynamic>> bannerAds = snapshot.data!;
+                        return CarouselSlider(
+                          options: CarouselOptions(
+                            height: MediaQuery.of(context).size.height * 0.16,
+                            viewportFraction: 0.935,
+                            initialPage: 0,
+                            enableInfiniteScroll: true,
+                            reverse: false,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 2),
+                            autoPlayAnimationDuration:
+                                Duration(milliseconds: 800),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enlargeCenterPage: true,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                          items: bannerAds.map((banner) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.935,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              "https://drycleaneo.com/cleaneomain/${banner['image']}"),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }).toList(),
+                                    Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            banner['title'],
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'SatoshiBold',
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.025),
+                                          ),
+                                          Text(
+                                            banner['description'],
+                                            maxLines: 2, // Set max lines to 2
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'SatoshiRegular',
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.013),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Blue Container
+                                    Positioned(
+                                      bottom:
+                                          MediaQuery.of(context).size.height *
+                                              0.015,
+                                      right: MediaQuery.of(context).size.width *
+                                          0.07,
+                                      child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.035,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Color(0xff29b2fe)),
+                                        child: Center(
+                                          child: Text(
+                                            "Know More",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'SatoshiBold',
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.016),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(height: mQuery.size.height * 0.035),
                   Padding(

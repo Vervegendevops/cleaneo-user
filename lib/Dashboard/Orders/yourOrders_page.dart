@@ -149,8 +149,8 @@ class _YourOrdersPageState extends State<YourOrdersPage>
                     Container(
                       width: double.infinity,
                       height: authentication.read('Authentication') == 'Guest'
-                          ? mQuery.size.height * 0.47
-                          : mQuery.size.height * 0.67,
+                          ? mQuery.size.height * 0.7
+                          : mQuery.size.height * 0.7,
                       decoration: const BoxDecoration(
                         color: Colors.white,
                       ),
