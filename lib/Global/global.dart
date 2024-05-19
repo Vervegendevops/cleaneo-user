@@ -20,3 +20,6 @@ String ExtraNotes = '';
 String SupportRider = '';
 const String apiKey = "AIzaSyAlcZM-RHySJIQmUwOaJmJCVPZcuMKS70Y";
 String paymentMode = '';
+String ALatitude = '';
+String ALongitude = '';
+String PlaceID = '';

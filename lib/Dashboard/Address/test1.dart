@@ -1,5 +1,6 @@
 import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
 import 'package:cleaneo_user/Dashboard/home_page.dart';
+import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/end.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -39,6 +40,8 @@ class _Test1State extends State<Test1> {
         position.longitude,
       );
       setState(() {
+        ALatitude = position.latitude.toString();
+        ALongitude = position.longitude.toString();
         address =
             '${placemarks[0].thoroughfare}, ${placemarks[0].subLocality}, ${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
       });
@@ -126,6 +129,8 @@ class _Test1State extends State<Test1> {
                       ),
                       onPressed: () async {
                         Caddress = address!;
+                        print(ALatitude);
+                        print(ALongitude);
                         Navigator.pop(context);
                         // Navigator.push(
                         //   context,

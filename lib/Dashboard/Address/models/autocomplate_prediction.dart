@@ -21,6 +21,7 @@ class AutocompletePrediction {
   });
 
   factory AutocompletePrediction.fromJson(Map<String, dynamic> json) {
+    print(json);
     return AutocompletePrediction(
       description: json['description'] as String?,
       placeId: json['place_id'] as String?,

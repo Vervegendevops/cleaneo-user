@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
 import 'package:cleaneo_user/Dashboard/Address/components/location_list_tile.dart';
 import 'package:cleaneo_user/Dashboard/Address/components/network_utility.dart';
@@ -8,6 +10,7 @@ import 'package:cleaneo_user/Global/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
 class SearchLocationScreen extends StatefulWidget {
   const SearchLocationScreen({Key? key}) : super(key: key);
@@ -37,6 +40,32 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
           placePredictions = result.predictions!;
         });
       }
+    }
+  }
+
+  void getLatLong() async {
+    final apiKey = 'AIzaSyAlcZM-RHySJIQmUwOaJmJCVPZcuMKS70Y';
+    final placeId = PlaceID;
+    final url =
+        'https://maps.googleapis.com/maps/api/place/details/json?placeid=$placeId&key=$apiKey';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      final data = jsonDecode(response.body);
+
+      // Extract the latitude and longitude
+      final location = data['result']['geometry']['location'];
+      final latitude = location['lat'];
+      final longitude = location['lng'];
+      ALatitude = latitude.toString();
+      ALongitude = longitude.toString();
+      // Print the latitude and longitude
+      print('Latitude: $ALatitude');
+      print('Longitude: $ALongitude');
+      Navigator.pop(context);
+    } else {
+      // Handle the error
+      print('Failed to load place details');
     }
   }
 
@@ -126,9 +155,10 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
               itemBuilder: (context, index) => LocationListTile(
                 press: () {
                   Caddress = placePredictions[index].description!;
+                  PlaceID = placePredictions[index].placeId.toString();
+                  print(PlaceID);
+                  getLatLong();
 
-                  print(Caddress);
-                  Navigator.pop(context);
                   // Navigator.push(
                   //   context,
                   //   MaterialPageRoute(builder: (context) => const SAddress()),

@@ -1,4 +1,5 @@
 import 'package:cleaneo_user/Dashboard/home_page.dart';
+import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/end.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -38,6 +39,8 @@ class _mapPageState extends State<mapPage> {
         position.longitude,
       );
       setState(() {
+        ALatitude = position.latitude.toString();
+        ALongitude = position.longitude.toString();
         address =
             '${placemarks[0].thoroughfare}, ${placemarks[0].subLocality}, ${placemarks[0].locality}, ${placemarks[0].administrativeArea}, ${placemarks[0].postalCode}';
       });
@@ -124,6 +127,8 @@ class _mapPageState extends State<mapPage> {
                         ),
                       ),
                       onPressed: () async {
+                        print(ALatitude);
+                        print(ALongitude);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

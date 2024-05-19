@@ -441,6 +441,8 @@ class _AddAddressState extends State<AddAddress> {
       'Caddress': Caddress,
       'Type': Type,
       'HTReach': HTReach,
+      'Latitude': ALatitude,
+      'Longitude': ALongitude
     };
 
     // Convert the request body to JSON format
