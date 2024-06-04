@@ -38,7 +38,15 @@ List<String> serviceList2 = [];
 class WashPage extends StatefulWidget {
   final String id;
   final String vendorAddress;
-  WashPage({Key? key, required this.id, required this.vendorAddress});
+  final String vendorLatitude;
+  final String vendorLongitude;
+
+  WashPage(
+      {Key? key,
+      required this.id,
+      required this.vendorAddress,
+      required this.vendorLongitude,
+      required this.vendorLatitude});
 
   @override
   State<WashPage> createState() => _WashPageState();
@@ -981,8 +989,11 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
                                       return OrderSummary(
-                                          id: widget.id,
-                                          vendorAddress: widget.vendorAddress);
+                                        id: widget.id,
+                                        vendorAddress: widget.vendorAddress,
+                                        vendorLatitude: widget.vendorLatitude,
+                                        vendorLongitude: widget.vendorLongitude,
+                                      );
                                     }));
                                   },
                             child: Column(
@@ -1195,8 +1206,16 @@ class ContainerItem extends StatelessWidget {
 
 class PaymentConfirmation extends StatefulWidget {
   String id;
+  String vendorAddress;
+  String vendorLongitude;
+  String vendorLatitude;
 
-  PaymentConfirmation({super.key, required this.id});
+  PaymentConfirmation(
+      {super.key,
+      required this.id,
+      required this.vendorAddress,
+      required this.vendorLongitude,
+      required this.vendorLatitude});
 
   @override
   State<PaymentConfirmation> createState() => _PaymentConfirmationState();
@@ -1337,7 +1356,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
 
   Future<void> createOrder(String idddd) async {
     String userID = UserData.read('ID');
-    print(userID);
+    print(widget.vendorAddress);
     // Define the API endpoint
     String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/createOrder';
 
@@ -1347,7 +1366,12 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
       'HTReach': AddBook[0]['HTReach'],
       'Floor': AddBook[0]['Floor'],
       'Caddress': AddBook[0]['Caddress'],
+      'UserLatitude': AddBook[0]['Latitude'],
+      'UserLongitude': AddBook[0]['Longitude'],
       'VendorId': '${widget.id}',
+      'VendorAddress': widget.vendorAddress,
+      'VendorLatitude': widget.vendorLatitude,
+      'VendorLongitude': widget.vendorLongitude,
       'Items': jsonEncode(CartItems),
       'PickupDate': PickupDate,
       'PickupTime': PickupTime,
@@ -1376,7 +1400,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
           return OrderPlaced();
         }));
       } else {
-        print('Failed to Create Order. Status code: ${response.statusCode}');
+        print('Failed to Create Order. Status code: ${response.body}');
       }
     } catch (e) {
       print('Error signing up: $e');

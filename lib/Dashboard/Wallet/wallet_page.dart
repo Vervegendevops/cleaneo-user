@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:cleaneo_user/main.dart';
+import 'package:http/http.dart' as http;
 import 'package:cleaneo_user/Dashboard/Wallet/addMoney_page.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +17,44 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchResponse();
+    selectedContainerIndex = -1;
+  }
+
+  String selectedAmount = '';
+  late int selectedContainerIndex;
+  Map userDataWallet = {};
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Future<Object> fetchResponse() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/signedUp/${UserData.read('phone')}';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          userDataWallet = jsonDecode(response.body);
+        });
+
+        print(userDataWallet['Wallet']);
+        return response.body == 'true';
+      } else {
+        // If the response status code is not 200, throw an exception or handle
+        // the error accordingly.
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      print('Error fetching data: $e');
+      return false; // Return false in case of an error.
+    }
+  }
+
   // Define a map to store the transactions data
   final List<Map<String, dynamic>> transactions =
       authentication.read('Authentication') == 'Guest'
@@ -104,7 +144,7 @@ class _WalletPageState extends State<WalletPage> {
                   authentication.read('Authentication') == 'Guest'
                       ? Container()
                       : Text(
-                          "Bal : ₹ $balance",
+                          "Bal : ₹ ${userDataWallet['Wallet']}",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: mQuery.size.height * 0.02,
@@ -159,10 +199,16 @@ class _WalletPageState extends State<WalletPage> {
                                 ? Container()
                                 : GestureDetector(
                                     onTap: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return AddMoneyPage();
-                                      }));
+                                      // Navigator.push(context,
+                                      //     MaterialPageRoute(builder: (context) {
+                                      //   return AddMoneyPage();
+                                      // }));
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container();
+                                        },
+                                      );
                                     },
                                     child: Container(
                                       width: mQuery.size.width * 0.06,
@@ -184,10 +230,86 @@ class _WalletPageState extends State<WalletPage> {
                                 ? Container()
                                 : GestureDetector(
                                     onTap: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return AddMoneyPage();
-                                      }));
+                                      // Navigator.push(context,
+                                      //     MaterialPageRoute(builder: (context) {
+                                      //   return AddMoneyPage();
+                                      // }));
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.3,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(20),
+                                                    topRight:
+                                                        Radius.circular(20))),
+                                            child: Column(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    // Navigator.push(context,
+                                                    //     MaterialPageRoute(builder: (context) {
+                                                    //   return OTPPage();
+                                                    // }));
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20.0),
+                                                    child: Container(
+                                                      width: double.infinity,
+                                                      height:
+                                                          mQuery.size.height *
+                                                              0.06,
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              Color(0xff29b2fe),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6)),
+                                                      child: Center(
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              "Add Money to Wallet",
+                                                              style: TextStyle(
+                                                                fontSize: mQuery
+                                                                        .size
+                                                                        .height *
+                                                                    0.02,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily:
+                                                                    'SatoshiBold',
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
                                     },
                                     child: Text(
                                       "Add Money",
@@ -209,14 +331,6 @@ class _WalletPageState extends State<WalletPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Text(
-                            //   "Today",
-                            //   style: TextStyle(
-                            //     color: Colors.black54,
-                            //     fontFamily: 'SatoshiRegular',
-                            //     fontSize: mQuery.size.height * 0.0185,
-                            //   ),
-                            // ),
                             SizedBox(height: mQuery.size.height * 0.013),
                             // Build list of transactions dynamically
 
@@ -319,6 +433,52 @@ class _WalletPageState extends State<WalletPage> {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAmountContainer(
+    MediaQueryData mQuery, {
+    required String amount,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: mQuery.size.width * 0.17,
+        height: mQuery.size.height * 0.085,
+        decoration: BoxDecoration(
+            color: isSelected ? Color(0xff29b2fe) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 0,
+                  blurRadius: 3,
+                  offset: Offset(0, 0))
+            ]),
+        child: Center(
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "₹",
+                  style: TextStyle(
+                      fontFamily: 'SatoshiMedium',
+                      color: isSelected ? Colors.white : Colors.black),
+                ),
+                TextSpan(
+                  text: amount,
+                  style: TextStyle(
+                      fontSize: mQuery.size.height * 0.022,
+                      fontFamily: 'SatoshiBold',
+                      color: isSelected ? Colors.white : Colors.black),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -403,6 +403,8 @@ class _ChooseVendorPageState extends State<ChooseVendorPage> {
                                         return WashPage(
                                           id: vendor['ID'],
                                           vendorAddress: vendor['address'],
+                                          vendorLatitude: vendor['Latitude'],
+                                          vendorLongitude: vendor['Longitude'],
                                         );
                                       }));
                                     },

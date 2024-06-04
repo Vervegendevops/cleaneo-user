@@ -14,7 +14,14 @@ double DeliveryCharge = 0;
 class OrderSummary extends StatefulWidget {
   String id;
   String vendorAddress;
-  OrderSummary({super.key, required this.id, required this.vendorAddress});
+  String vendorLongitude;
+  String vendorLatitude;
+  OrderSummary(
+      {super.key,
+      required this.id,
+      required this.vendorAddress,
+      required this.vendorLongitude,
+      required this.vendorLatitude});
 
   @override
   State<OrderSummary> createState() => _OrderSummaryState();
@@ -643,6 +650,8 @@ class _OrderSummaryState extends State<OrderSummary> {
             GestureDetector(
               onTap: () {
                 print('User Id : ${UserData.read('ID')}');
+                print('vendor Latitude :${widget.vendorLatitude}');
+                print('vendor Longitude :${widget.vendorLongitude}');
                 print('Vendor id : ${widget.id}');
                 print('Vendor Address : ${widget.vendorAddress}');
                 print('Cart Items : ${jsonEncode(CartItems)}');
@@ -659,11 +668,18 @@ class _OrderSummaryState extends State<OrderSummary> {
                 if (AddBook.length > 0) print('Floor : ${AddBook[0]['Floor']}');
                 if (AddBook.length > 0)
                   print('How to reach : ${AddBook[0]['HTReach']}');
+                if (AddBook.length > 0)
+                  print('Latitude : ${AddBook[0]['Latitude']}');
+                if (AddBook.length > 0)
+                  print('Longitude : ${AddBook[0]['Longitude']}');
                 showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
                     return PaymentConfirmation(
                       id: widget.id,
+                      vendorAddress: widget.vendorAddress,
+                      vendorLatitude: widget.vendorLatitude,
+                      vendorLongitude: widget.vendorLongitude,
                     );
                   },
                 );
