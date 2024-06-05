@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cleaneo_user/Dashboard/Wallet/AddMoneyPopup.dart';
 import 'package:cleaneo_user/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:cleaneo_user/Dashboard/Wallet/addMoney_page.dart';
@@ -102,10 +103,10 @@ class _WalletPageState extends State<WalletPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: MyDrawer(),
+      drawer: const MyDrawer(),
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Color(0xff006acb),
         ),
         child: Column(
@@ -140,7 +141,7 @@ class _WalletPageState extends State<WalletPage> {
                         color: Colors.white,
                         fontFamily: 'SatoshiBold'),
                   ),
-                  Expanded(child: SizedBox()),
+                  const Expanded(child: SizedBox()),
                   authentication.read('Authentication') == 'Guest'
                       ? Container()
                       : Text(
@@ -156,7 +157,7 @@ class _WalletPageState extends State<WalletPage> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
@@ -189,12 +190,12 @@ class _WalletPageState extends State<WalletPage> {
                               onTap: () {
                                 _openTransactionBottomSheet(context);
                               },
-                              child: Text(
+                              child: const Text(
                                 "Transactions",
                                 style: TextStyle(fontFamily: 'SatoshiMedium'),
                               ),
                             ),
-                            Expanded(child: SizedBox()),
+                            const Expanded(child: SizedBox()),
                             authentication.read('Authentication') == 'Guest'
                                 ? Container()
                                 : GestureDetector(
@@ -213,7 +214,7 @@ class _WalletPageState extends State<WalletPage> {
                                     child: Container(
                                       width: mQuery.size.width * 0.06,
                                       height: mQuery.size.height * 0.02,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: Color(0xff29b2fe),
                                           shape: BoxShape.circle),
                                       child: Center(
@@ -230,92 +231,98 @@ class _WalletPageState extends State<WalletPage> {
                                 ? Container()
                                 : GestureDetector(
                                     onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return MoneyInputWidget();
+                                        },
+                                      );
                                       // Navigator.push(context,
                                       //     MaterialPageRoute(builder: (context) {
                                       //   return AddMoneyPage();
                                       // }));
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) {
-                                          return Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.3,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                1,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(20),
-                                                    topRight:
-                                                        Radius.circular(20))),
-                                            child: Column(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    // Navigator.push(context,
-                                                    //     MaterialPageRoute(builder: (context) {
-                                                    //   return OTPPage();
-                                                    // }));
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            20.0),
-                                                    child: Container(
-                                                      width: double.infinity,
-                                                      height:
-                                                          mQuery.size.height *
-                                                              0.06,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Color(0xff29b2fe),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(6)),
-                                                      child: Center(
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              "Add Money to Wallet",
-                                                              style: TextStyle(
-                                                                fontSize: mQuery
-                                                                        .size
-                                                                        .height *
-                                                                    0.02,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontFamily:
-                                                                    'SatoshiBold',
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
+                                      // showModalBottomSheet(
+                                      //   context: context,
+                                      //   builder: (context) {
+                                      //     return Container(
+                                      //       height: MediaQuery.of(context)
+                                      //               .size
+                                      //               .height *
+                                      //           0.3,
+                                      //       width: MediaQuery.of(context)
+                                      //               .size
+                                      //               .height *
+                                      //           1,
+                                      //       decoration: BoxDecoration(
+                                      //           color: Colors.white,
+                                      //           borderRadius: BorderRadius.only(
+                                      //               topLeft:
+                                      //                   Radius.circular(20),
+                                      //               topRight:
+                                      //                   Radius.circular(20))),
+                                      //       child: Column(
+                                      //         children: [
+                                      //           GestureDetector(
+                                      //             onTap: () {
+                                      //               // Navigator.push(context,
+                                      //               //     MaterialPageRoute(builder: (context) {
+                                      //               //   return OTPPage();
+                                      //               // }));
+                                      //             },
+                                      //             child: Padding(
+                                      //               padding:
+                                      //                   const EdgeInsets.all(
+                                      //                       20.0),
+                                      //               child: Container(
+                                      //                 width: double.infinity,
+                                      //                 height:
+                                      //                     mQuery.size.height *
+                                      //                         0.06,
+                                      //                 decoration: BoxDecoration(
+                                      //                     color:
+                                      //                         Color(0xff29b2fe),
+                                      //                     borderRadius:
+                                      //                         BorderRadius
+                                      //                             .circular(6)),
+                                      //                 child: Center(
+                                      //                   child: Row(
+                                      //                     mainAxisAlignment:
+                                      //                         MainAxisAlignment
+                                      //                             .center,
+                                      //                     children: [
+                                      //                       Text(
+                                      //                         "Add Money to Wallet",
+                                      //                         style: TextStyle(
+                                      //                           fontSize: mQuery
+                                      //                                   .size
+                                      //                                   .height *
+                                      //                               0.02,
+                                      //                           color: Colors
+                                      //                               .white,
+                                      //                           fontFamily:
+                                      //                               'SatoshiBold',
+                                      //                         ),
+                                      //                       ),
+                                      //                       SizedBox(
+                                      //                         width: 5,
+                                      //                       ),
+                                      //                     ],
+                                      //                   ),
+                                      //                 ),
+                                      //               ),
+                                      //             ),
+                                      //           ),
+                                      //         ],
+                                      //       ),
+                                      //     );
+                                      //   },
+                                      // );
                                     },
                                     child: Text(
                                       "Add Money",
                                       style: TextStyle(
                                           fontSize: mQuery.size.height * 0.018,
-                                          color: Color(0xff29b2fe),
+                                          color: const Color(0xff29b2fe),
                                           fontFamily: 'SatoshiMedium'),
                                     ),
                                   ),
@@ -323,7 +330,7 @@ class _WalletPageState extends State<WalletPage> {
                         ),
                       ),
                       SizedBox(height: mQuery.size.height * 0.023),
-                      Divider(),
+                      const Divider(),
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: mQuery.size.width * 0.045,
@@ -339,7 +346,7 @@ class _WalletPageState extends State<WalletPage> {
                                   ? Container(
                                       width: double.infinity,
                                       height: mQuery.size.height * 0.5,
-                                      child: Center(
+                                      child: const Center(
                                           child:
                                               Text('No Transactions to show')),
                                     )
@@ -355,7 +362,7 @@ class _WalletPageState extends State<WalletPage> {
                                             color: Colors.grey.withOpacity(0.2),
                                             spreadRadius: 3,
                                             blurRadius: 10,
-                                            offset: Offset(0,
+                                            offset: const Offset(0,
                                                 0), // changes the position of the shadow
                                           ),
                                         ],
@@ -364,7 +371,7 @@ class _WalletPageState extends State<WalletPage> {
                                         children: [
                                           Image.asset(
                                             transaction['image'],
-                                            color: Color(0xff29b2fe),
+                                            color: const Color(0xff29b2fe),
                                             width: mQuery.size.width * 0.06,
                                           ),
                                           SizedBox(
@@ -405,7 +412,7 @@ class _WalletPageState extends State<WalletPage> {
                                               )
                                             ],
                                           ),
-                                          Expanded(child: SizedBox()),
+                                          const Expanded(child: SizedBox()),
                                           Text(
                                             transaction['amount'] >= 0
                                                 ? "+ ₹ ${transaction['amount'].abs().toStringAsFixed(2)}"
@@ -450,14 +457,14 @@ class _WalletPageState extends State<WalletPage> {
         width: mQuery.size.width * 0.17,
         height: mQuery.size.height * 0.085,
         decoration: BoxDecoration(
-            color: isSelected ? Color(0xff29b2fe) : Colors.white,
+            color: isSelected ? const Color(0xff29b2fe) : Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 0,
                   blurRadius: 3,
-                  offset: Offset(0, 0))
+                  offset: const Offset(0, 0))
             ]),
         child: Center(
           child: RichText(
@@ -495,7 +502,7 @@ class _WalletPageState extends State<WalletPage> {
             return Container(
               width: double.infinity,
               height: mQuery.size.height * 0.82,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -520,7 +527,7 @@ class _WalletPageState extends State<WalletPage> {
                       ),
                     ),
                     SizedBox(height: mQuery.size.height * 0.0075),
-                    Divider(),
+                    const Divider(),
                     SizedBox(height: mQuery.size.height * 0.016),
                     Column(
                       children: [
@@ -548,7 +555,7 @@ class _WalletPageState extends State<WalletPage> {
                           Icons.check,
                         ),
                         SizedBox(height: mQuery.size.height * 0.023),
-                        Divider(),
+                        const Divider(),
                         SizedBox(height: mQuery.size.height * 0.02),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -595,7 +602,7 @@ class _WalletPageState extends State<WalletPage> {
                                           color: Colors.grey.withOpacity(0.5),
                                           spreadRadius: 0,
                                           blurRadius: 7,
-                                          offset: Offset(0, 0),
+                                          offset: const Offset(0, 0),
                                         ),
                                       ],
                                     ),
@@ -649,7 +656,7 @@ class _WalletPageState extends State<WalletPage> {
                                           color: Colors.grey.withOpacity(0.5),
                                           spreadRadius: 0,
                                           blurRadius: 7,
-                                          offset: Offset(0, 0),
+                                          offset: const Offset(0, 0),
                                         ),
                                       ],
                                     ),
@@ -691,14 +698,14 @@ class _WalletPageState extends State<WalletPage> {
                                 onTap: () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return WalletPage();
+                                    return const WalletPage();
                                   }));
                                 },
                                 child: Container(
                                   width: mQuery.size.width * 0.42,
                                   height: mQuery.size.height * 0.057,
                                   decoration: BoxDecoration(
-                                    color: Color(0xff004c91),
+                                    color: const Color(0xff004c91),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Center(
@@ -717,14 +724,14 @@ class _WalletPageState extends State<WalletPage> {
                                 onTap: () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return WalletPage();
+                                    return const WalletPage();
                                   }));
                                 },
                                 child: Container(
                                   width: mQuery.size.width * 0.42,
                                   height: mQuery.size.height * 0.057,
                                   decoration: BoxDecoration(
-                                    color: Color(0xff29b2fe),
+                                    color: const Color(0xff29b2fe),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Center(
@@ -771,8 +778,8 @@ class _WalletPageState extends State<WalletPage> {
               height: mQuery.size.height * 0.031,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Color(0xff29b2fe))),
-              child: Center(
+                  border: Border.all(color: const Color(0xff29b2fe))),
+              child: const Center(
                 child: Text(
                   "₹",
                   style: TextStyle(color: Color(0xff29b2fe)),
@@ -786,13 +793,13 @@ class _WalletPageState extends State<WalletPage> {
                   fontFamily: 'SatoshiMedium',
                   fontSize: mQuery.size.height * 0.017),
             ),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Container(
               width: mQuery.size.width * 0.06,
               height: mQuery.size.height * 0.025,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xff29b2fe)),
+                border: Border.all(color: const Color(0xff29b2fe)),
                 color: selectedIndex == index ? Colors.cyan : Colors.white,
               ),
               child: selectedIndex == index

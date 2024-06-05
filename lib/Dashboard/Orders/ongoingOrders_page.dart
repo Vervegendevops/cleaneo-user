@@ -37,14 +37,20 @@ class OnGoingOrders extends StatelessWidget {
     }
   }
 
+  List<Map<String, dynamic>> parseItems(String itemsJson) {
+    final List<dynamic> jsonData = json.decode(itemsJson);
+    return List<Map<String, dynamic>>.from(jsonData);
+  }
+
   @override
   Widget build(BuildContext context) {
     var mQuery = MediaQuery.of(context);
+
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: fetchUserOrders(userId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(
               strokeWidth: 4.0,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -73,7 +79,8 @@ class OnGoingOrders extends StatelessWidget {
                         json.decode(order['Items']));
 
                 return Container(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     // border: Border.all(color: Colors.grey),
@@ -84,7 +91,8 @@ class OnGoingOrders extends StatelessWidget {
                             Colors.grey.withOpacity(0.5), // color of the shadow
                         spreadRadius: 2, // spread radius
                         blurRadius: 5, // blur radius
-                        offset: Offset(0, 2), // changes position of shadow
+                        offset:
+                            const Offset(0, 2), // changes position of shadow
                       ),
                     ],
                   ),
@@ -94,7 +102,7 @@ class OnGoingOrders extends StatelessWidget {
                       Container(
                         width: double.infinity,
                         height: mQuery.size.height * 0.05,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFE9F8FF),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(6),
@@ -108,13 +116,13 @@ class OnGoingOrders extends StatelessWidget {
                             children: [
                               Text(
                                 'Order ID: $orderId',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SatoshiBold'),
                               ),
                               Text(
                                 '₹ ${order['UserTotalCost']}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SatoshiBold'),
                               ),
@@ -122,13 +130,13 @@ class OnGoingOrders extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Details',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -136,23 +144,32 @@ class OnGoingOrders extends StatelessWidget {
                             ),
                             Text(
                               'Pickup Date: $pickupDate',
-                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                              style:
+                                  const TextStyle(fontFamily: 'SatoshiMedium'),
                             ),
                             Text(
                               'Delivery Date: $deliveryDate',
-                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                              style:
+                                  const TextStyle(fontFamily: 'SatoshiMedium'),
                             ),
                             Text(
                               'Delivery Time: $deliveryTime',
-                              style: TextStyle(fontFamily: 'SatoshiMedium'),
+                              style:
+                                  const TextStyle(fontFamily: 'SatoshiMedium'),
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Show More',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'SatoshiBold'),
+                            const SizedBox(height: 10),
+                            GestureDetector(
+                              onTap: () {
+                                print('test');
+                                showCustomModalBottomSheet(context, order);
+                              },
+                              child: const Text(
+                                'Show More',
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'SatoshiBold'),
+                              ),
                             ),
                           ],
                         ),
@@ -202,6 +219,105 @@ class OnGoingOrders extends StatelessWidget {
             ),
           );
         }
+      },
+    );
+  }
+
+  void showCustomModalBottomSheet(
+      BuildContext context, Map<String, dynamic> order) {
+    List<Map<String, dynamic>> items = parseItems(order['Items']);
+    var mQuery = MediaQuery.of(context);
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            height: 900,
+            width: double.infinity,
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Order Details',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontFamily: 'SatoshiBold',
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    // border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.grey.withOpacity(0.5), // color of the shadow
+                        spreadRadius: 2, // spread radius
+                        blurRadius: 5, // blur radius
+                        offset:
+                            const Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Order ID: ${order['OrderID']}',
+                        style: TextStyle(
+                            fontSize: 16.0, fontFamily: 'SatoshiMedium'),
+                      ),
+                      Text(
+                        'Pickup Date: ${order['PickupDate']}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Text(
+                        'Delivery Date: ${order['DeliveryDate']}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Text(
+                        'Delivery Time: ${order['DeliveryTime']}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 16.0),
+                Text(
+                  'Items:',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                // Display list of items
+                SizedBox(height: 8.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: items.map((item) {
+                    return Text(
+                      '- ${item['name']}: ${item['quantity']} x ₹${item['price']}',
+                      style: TextStyle(fontSize: 16.0),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Close'),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

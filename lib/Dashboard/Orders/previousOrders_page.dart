@@ -1,251 +1,324 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:get_storage/get_storage.dart';
 
-class PreviousOrdersPage extends StatefulWidget {
-  const PreviousOrdersPage({Key? key}) : super(key: key);
+List<Map<String, dynamic>> orders = [];
 
-  @override
-  State<PreviousOrdersPage> createState() => _PreviousOrdersPageState();
-}
+class PreviousOrdersPage extends StatelessWidget {
+  final authentication = GetStorage();
+  final String userId;
 
-class _PreviousOrdersPageState extends State<PreviousOrdersPage> {
-  List<Map<String, dynamic>> orders = [
-    {
-      'orderNo': "#1234567890",
-      'date': "04 Jul 2021 at 8:09 pm",
-      'price': 100.00,
-      'rating': 4.5,
-      'items': [
-        "WASH - 01 x Shirts (Woman), 02 x T-Shirts (Men)",
-        "WASH & STREAM IRON - 02 x Kurta Designer (Men), 01 x Bed-Sheet Single",
-        "DRY CLEAN - 02 x Bath Mate",
-      ],
-    },
-    {
-      'orderNo': "#1234567890",
-      'date': "04 Jul 2021 at 8:09 pm",
-      'price': 100.00,
-      'rating': 4.5,
-      'items': [
-        "WASH - 01 x Shirts (Woman), 02 x T-Shirts (Men)",
-        "WASH & STREAM IRON - 02 x Kurta Designer (Men), 01 x Bed-Sheet Single",
-        "DRY CLEAN - 02 x Bath Mate",
-      ],
-    },
-    {
-      'orderNo': "#0987654321",
-      'date': "26 Jun 2021 at 6:00 pm",
-      'price': 150.00,
-      'rating': null,
-      'items': [
-        "WASH - 01 x Shirts (Woman), 02 x T-Shirts (Men)",
-        "WASH & STREAM IRON - 02 x Kurta Designer (Men), 01 x Bed-Sheet Single",
-        "DRY CLEAN - 02 x Bath Mate",
-      ],
-    },
-  ];
+  PreviousOrdersPage({required this.userId});
+
+  Future<List<Map<String, dynamic>>> fetchUserOrders(String userId) async {
+    final String apiUrl =
+        'https://drycleaneo.com/CleaneoUser/api/user-orders/$userId';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        // Parse JSON response directly into a list of maps
+        final List<dynamic> jsonData = json.decode(response.body);
+
+        // Filter orders based on the length of the "status" field
+        List<Map<String, dynamic>> filteredOrders =
+            List<Map<String, dynamic>>.from(jsonData.where((order) =>
+                (json.decode(order['status']) as List<dynamic>).length == 2));
+
+        return filteredOrders;
+      } else {
+        // If the response status code is not 200, throw an exception or handle the error accordingly.
+        throw Exception('Failed to fetch user orders: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      throw Exception('Error fetching user orders: $e');
+    }
+  }
+
+  List<Map<String, dynamic>> parseItems(String itemsJson) {
+    final List<dynamic> jsonData = json.decode(itemsJson);
+    return List<Map<String, dynamic>>.from(jsonData);
+  }
 
   @override
   Widget build(BuildContext context) {
     var mQuery = MediaQuery.of(context);
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var order in orders)
-            Column(
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchUserOrders(userId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 4.0,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          // Data loaded successfully
+          List<Map<String, dynamic>> orders = snapshot.data!;
+          // Build your UI using the fetched data
+          return SingleChildScrollView(
+            child: Column(
+              children: orders.map((order) {
+                // Extract basic order details
+                final orderId = order['OrderID'];
+                final pickupDate = order['PickupDate'];
+                final deliveryDate = order['DeliveryDate'];
+                final deliveryTime = order['DeliveryTime'];
+
+                // Parse items JSON string into a list of maps
+                List<Map<String, dynamic>> items =
+                    List<Map<String, dynamic>>.from(
+                        json.decode(order['Items']));
+
+                return Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    // border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.grey.withOpacity(0.5), // color of the shadow
+                        spreadRadius: 2, // spread radius
+                        blurRadius: 5, // blur radius
+                        offset:
+                            const Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: mQuery.size.height * 0.05,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFE9F8FF),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            topRight: Radius.circular(6),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Order ID: $orderId',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SatoshiBold'),
+                              ),
+                              Text(
+                                '₹ ${order['UserTotalCost']}',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SatoshiBold'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Details',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'SatoshiBold'),
+                            ),
+                            Text(
+                              'Pickup Date: $pickupDate',
+                              style:
+                                  const TextStyle(fontFamily: 'SatoshiMedium'),
+                            ),
+                            Text(
+                              'Delivery Date: $deliveryDate',
+                              style:
+                                  const TextStyle(fontFamily: 'SatoshiMedium'),
+                            ),
+                            Text(
+                              'Delivery Time: $deliveryTime',
+                              style:
+                                  const TextStyle(fontFamily: 'SatoshiMedium'),
+                            ),
+                            const SizedBox(height: 10),
+                            GestureDetector(
+                              onTap: () {
+                                showCustomModalBottomSheet(context, order);
+                              },
+                              child: const Text(
+                                'Show More',
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'SatoshiBold'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      /*
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 8.0),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: items.length > 5 ? 5 : items.length,
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            return Text(
+                              '${item['name']} ${item['price']} X${item['quantity']}',
+                            );
+                          },
+                        ),
+                      ),
+                      if (items.length > 5)
+                        TextButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  padding: EdgeInsets.all(20),
+                                  child: ListView.builder(
+                                    itemCount: items.length,
+                                    itemBuilder: (context, index) {
+                                      final item = items[index];
+                                      return Text(
+                                        '${item['type']}: ${item['name']} ${item['price']} X${item['quantity']}',
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Text('See More'),
+                        ),
+                        */
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  void showCustomModalBottomSheet(
+      BuildContext context, Map<String, dynamic> order) {
+    List<Map<String, dynamic>> items = parseItems(order['Items']);
+    var mQuery = MediaQuery.of(context);
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            height: 900,
+            width: double.infinity,
+            padding: EdgeInsets.all(16.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: mQuery.size.height * 0.018),
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Text(
-                    order['date'],
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontFamily: 'SatoshiRegular',
-                      fontSize: mQuery.size.height * 0.017,
-                    ),
+                Text(
+                  'Order Details',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontFamily: 'SatoshiBold',
                   ),
                 ),
-                SizedBox(height: mQuery.size.height * 0.005),
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: mQuery.size.height * 0.26,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 0,
-                          blurRadius: 6,
-                          offset: Offset(0, 0),
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: mQuery.size.height * 0.045,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: mQuery.size.width * 0.033,
-                          ),
-                          color: Color(0xffe9f7ff),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                "assets/images/drawer-images/shopping-bag.png",
-                                color: Color(0xff29b2fe),
-                                width: mQuery.size.width * 0.06,
-                              ),
-                              SizedBox(width: mQuery.size.width * 0.02),
-                              Text(
-                                "Order ${order['orderNo']}",
-                                style: TextStyle(
-                                  fontFamily: 'SatoshiMedium',
-                                  fontSize: mQuery.size.height * 0.0165,
-                                ),
-                              ),
-                              Expanded(child: SizedBox()),
-                              Text(
-                                "₹ ${order['price'].toStringAsFixed(2)}",
-                                style: TextStyle(
-                                  fontFamily: 'SatoshiMedium',
-                                  fontSize: mQuery.size.height * 0.017,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: mQuery.size.height * 0.01),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: mQuery.size.width * 0.033,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "ITEMS",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontFamily: 'SatoshiRegular',
-                                  fontSize: mQuery.size.height * 0.016,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  for (var item in order['items'])
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: item.split('-')[0].trim(),
-                                            style: TextStyle(
-                                              fontFamily: 'SatoshiMedium',
-                                              color: Colors.black,
-                                              fontSize:
-                                                  mQuery.size.height * 0.0155,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text:
-                                                '-${item.split('-')[1].trim()}',
-                                            style: TextStyle(
-                                              fontSize:
-                                                  mQuery.size.height * 0.0155,
-                                              fontFamily: 'SatoshiRegular',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: mQuery.size.width * 0.033,
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: mQuery.size.width * 0.18,
-                                height: mQuery.size.height * 0.03,
-                                decoration: BoxDecoration(
-                                  color: Color(0xffe5f5e8),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Delivered",
-                                    style: TextStyle(
-                                      color: Color(0xff009c1a),
-                                      fontSize: mQuery.size.height * 0.014,
-                                      fontFamily: 'SatoshiMedium',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(child: SizedBox()),
-                              order['rating'] != null
-                                  ? Row(
-                                      children: [
-                                        Icon(
-                                          Icons.star,
-                                          size: mQuery.size.width * 0.05,
-                                          color: Color(0xff29b2fe),
-                                        ),
-                                        SizedBox(
-                                          width: mQuery.size.width * 0.01,
-                                        ),
-                                        Text(
-                                          "${order['rating']}",
-                                          style: TextStyle(
-                                            fontFamily: 'SatoshiMedium',
-                                            fontSize:
-                                                mQuery.size.height * 0.0155,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        // Implement your review submission logic here
-                                      },
-                                      child: Text(
-                                        "SUBMIT REVIEW",
-                                        style: TextStyle(
-                                          color: Color(0xff29b2fe),
-                                          fontFamily: 'SatoshiMedium',
-                                          fontSize: mQuery.size.height * 0.014,
-                                        ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.transparent,
-                                        elevation: 0,
-                                      ),
-                                    ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                SizedBox(height: 16.0),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    // border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.grey.withOpacity(0.5), // color of the shadow
+                        spreadRadius: 2, // spread radius
+                        blurRadius: 5, // blur radius
+                        offset:
+                            const Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
                   ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Order ID: ${order['OrderID']}',
+                        style: TextStyle(
+                            fontSize: 16.0, fontFamily: 'SatoshiMedium'),
+                      ),
+                      Text(
+                        'Pickup Date: ${order['PickupDate']}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Text(
+                        'Delivery Date: ${order['DeliveryDate']}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Text(
+                        'Delivery Time: ${order['DeliveryTime']}',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 16.0),
+                Text(
+                  'Items:',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                // Display list of items
+                SizedBox(height: 8.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: items.map((item) {
+                    return Text(
+                      '- ${item['name']}: ${item['quantity']} x ₹${item['price']}',
+                      style: TextStyle(fontSize: 16.0),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Close'),
                 ),
               ],
             ),
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }

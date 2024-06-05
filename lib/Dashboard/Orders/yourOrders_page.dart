@@ -176,7 +176,9 @@ class _YourOrdersPageState extends State<YourOrdersPage>
                                 OnGoingOrders(
                                   userId: 'CleaneoUser000012',
                                 ),
-                                const PreviousOrdersPage(),
+                                PreviousOrdersPage(
+                                  userId: 'CleaneoUser000012',
+                                ),
                               ],
                             ),
                     ),
