@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cleaneo_user/Dashboard/Orders/ongoingOrders_page.dart';
 import 'package:cleaneo_user/Dashboard/Orders/previousOrders_page.dart';
+import 'package:cleaneo_user/main.dart';
 import 'package:cleaneo_user/pages/mydrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -65,6 +66,7 @@ class _YourOrdersPageState extends State<YourOrdersPage>
 
   @override
   Widget build(BuildContext context) {
+    print(UserData.read('ID'));
     var mQuery = MediaQuery.of(context);
     return Scaffold(
       key: _scaffoldKey,
@@ -149,8 +151,8 @@ class _YourOrdersPageState extends State<YourOrdersPage>
                     Container(
                       width: double.infinity,
                       height: authentication.read('Authentication') == 'Guest'
-                          ? mQuery.size.height * 0.7
-                          : mQuery.size.height * 0.7,
+                          ? mQuery.size.height * 0.66
+                          : mQuery.size.height * 0.66,
                       decoration: const BoxDecoration(
                         color: Colors.white,
                       ),
@@ -174,10 +176,10 @@ class _YourOrdersPageState extends State<YourOrdersPage>
                               controller: _tabController,
                               children: [
                                 OnGoingOrders(
-                                  userId: 'CleaneoUser000012',
+                                  userId: '${UserData.read('ID')}',
                                 ),
                                 PreviousOrdersPage(
-                                  userId: 'CleaneoUser000012',
+                                  userId: '${UserData.read('ID')}',
                                 ),
                               ],
                             ),

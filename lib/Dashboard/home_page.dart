@@ -281,29 +281,29 @@ class _HomePageState extends State<HomePage> {
                           width: mQuery.size.width * 0.3,
                         ),
                         Expanded(child: SizedBox()),
-                        authentication.read('Authentication') == 'Guest'
-                            ? Container()
-                            : GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return const MyProfilePage();
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: ProfilePicture(
-                                  name: authentication.read('Authentication') ==
-                                          'Guest'
-                                      ? "Guest"
-                                      : "",
-                                  radius: 16,
-                                  fontsize: 10,
-                                  // img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwKKzV4oKveaDEmBr38LXuMWTho1d1-mjOOcjau6XJ1A&s",
-                                ),
-                              )
+                        // authentication.read('Authentication') == 'Guest'
+                        //     ? Container()
+                        //     : GestureDetector(
+                        //         onTap: () {
+                        //           Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (context) {
+                        //                 return const MyProfilePage();
+                        //               },
+                        //             ),
+                        //           );
+                        //         },
+                        //         child: ProfilePicture(
+                        //           name: authentication.read('Authentication') ==
+                        //                   'Guest'
+                        //               ? "Guest"
+                        //               : "",
+                        //           radius: 16,
+                        //           fontsize: 10,
+                        //           // img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwKKzV4oKveaDEmBr38LXuMWTho1d1-mjOOcjau6XJ1A&s",
+                        //         ),
+                        //       )
                       ],
                     ),
                   ),
