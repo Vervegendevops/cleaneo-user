@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
@@ -52,16 +53,18 @@ class _SignUpPageState extends State<SignUpPage> {
 
       if (response.statusCode == 200) {
         print(response.body);
+
         if (response.body == "false") {
           OTP = (1000 + Random().nextInt(9000)).toString();
           fetchResponse2();
 
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return OTPPage();
-          }));
+          // Navigator.push(context, MaterialPageRoute(builder: (context) {
+          //   return OTPPage();
+          // }));
         } else {
           setState(() {
             ispressed = false;
+
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -107,6 +110,32 @@ class _SignUpPageState extends State<SignUpPage> {
           UserID = 'Cleaneo$CountUser';
         }
         print(UserID);
+        fetchResponse3(Signupphone);
+        return response.body == 'true';
+      } else {
+        // If the response status code is not 200, throw an exception or handle
+        // the error accordingly.
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      print('Error fetching data: $e');
+      return false; // Return false in case of an error.
+    }
+  }
+
+  Future<Object> fetchResponse3(String phoneNumber) async {
+    final url =
+        'http://app.pingbix.com/SMSApi/send?userid=cleaneoapp&password=EghpgNS3&sendMethod=quick&mobile=$phoneNumber&msg=Hello+$Signupname%2C%0D%0AYour+OTP+for+Cleaneo+login%2Fsignup+is+%3A+$OTP.%0D%0AThank+You&senderid=CLE123&msgType=text&dltEntityId=&dltTemplateId=1207171510723882445&duplicatecheck=true&output=json';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        print('otp Sent');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return OTPPage();
+        }));
         return response.body == 'true';
       } else {
         // If the response status code is not 200, throw an exception or handle
@@ -124,6 +153,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(phoneNumber);
     var mQuery = MediaQuery.of(context);
     return AnimatedOpacity(
       opacity: _opacity, // Use the opacity variable
@@ -229,6 +259,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               onSubmitted: (value) {
                                 setState(() {
                                   Signupname = value;
+
                                 });
                               },
                               onEditingComplete: () {

@@ -15,6 +15,7 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:email_auth/email_auth.dart';
 
 Map<String, dynamic> userList = {};
+Map UserDataFinal = {};
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -42,6 +43,49 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  // Future<Object> fetchResponse(String phoneNumber) async {
+  //   final url = 'https://drycleaneo.com/CleaneoUser/api/signedUp/$phoneNumber';
+  //
+  //   try {
+  //     final response = await http.get(Uri.parse(url));
+  //
+  //     if (response.statusCode == 200) {
+  //       userList = jsonDecode(response.body); // Decode the response
+  //       print(userList);
+  //
+  //       if (response.body == "false") {
+  //         setState(() {
+  //           ispressed = false;
+  //         });
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text('User does not exists. Please Sign up.'),
+  //             behavior: SnackBarBehavior.floating,
+  //             shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(10)),
+  //             margin: EdgeInsets.all(16.0),
+  //           ),
+  //         );
+  //       } else {
+  //         OTP = (1000 + Random().nextInt(9000)).toString();
+  //         fetchResponse2(phoneNumber);
+  //         // Navigator.push(context, MaterialPageRoute(builder: (context) {
+  //         //   return OTPPage();
+  //         // }));
+  //       }
+  //       return response.body == 'true';
+  //     } else {
+  //       // If the response status code is not 200, throw an exception or handle
+  //       // the error accordingly.
+  //       throw Exception('Failed to fetch data: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     // Handle exceptions if any occur during the request.
+  //     print('Error fetching data: $e');
+  //     return false; // Return false in case of an error.
+  //   }
+  // }
+
   Future<Object> fetchResponse(String phoneNumber) async {
     final url = 'https://drycleaneo.com/CleaneoUser/api/signedUp/$phoneNumber';
 
@@ -49,10 +93,9 @@ class _LoginPageState extends State<LoginPage> {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        userList = jsonDecode(response.body); // Decode the response
-        print(userList);
+        print(response.body);
 
-        if (response.body == "false") {
+        if (response.body == 'false') {
           setState(() {
             ispressed = false;
           });
@@ -66,12 +109,36 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         } else {
+          userList = jsonDecode(response.body);
           OTP = (1000 + Random().nextInt(9000)).toString();
-
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return OTPPage();
-          }));
+          authentication.write('Authentication', 'loggedIN');
+          fetchResponse2(phoneNumber);
         }
+        return response.body == 'true';
+      } else {
+        // If the response status code is not 200, throw an exception or handle
+        // the error accordingly.
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions if any occur during the request.
+      print('Error fetching data: $e');
+      return false; // Return false in case of an error.
+    }
+  }
+
+  Future<Object> fetchResponse2(String phoneNumber) async {
+    final url =
+        'http://app.pingbix.com/SMSApi/send?userid=cleaneoapp&password=EghpgNS3&sendMethod=quick&mobile=$phoneNumber&msg=Hello+${userList['name']}%2C%0D%0AYour+OTP+for+Cleaneo+login%2Fsignup+is+%3A+$OTP.%0D%0AThank+You&senderid=CLE123&msgType=text&dltEntityId=&dltTemplateId=1207171510723882445&duplicatecheck=true&output=json';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        print('otp Sent');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return OTPPage();
+        }));
         return response.body == 'true';
       } else {
         // If the response status code is not 200, throw an exception or handle
@@ -226,6 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                                     onChanged: (value) {
                                       setState(() {
                                         Loginphone = value;
+                                        print(Loginphone);
                                       });
                                     },
                                     onSubmitted: (value) {

@@ -181,7 +181,7 @@ class _OTPPageState extends State<OTPPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Enter 4 Digit Code $OTP",
+                          "Enter 4 Digit Code",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: mQuery.size.height * 0.0215,
@@ -271,14 +271,24 @@ class _OTPPageState extends State<OTPPage> {
                               print("same");
                               print(auth);
                               print(userList['name']);
-                              UserData.write('name', userList['name']);
-                              UserData.write('email', userList['email']);
-                              UserData.write('phone', userList['phone']);
-                              UserData.write('Wallet', userList['Wallet']);
-                              UserData.write('ID', userList['ID']);
-                              UserData.write('authen', 'true');
-                              UserData.write('Wallet', userList['Wallet']);
+                              auth == 'login' ? {
+                              print(auth),
+                              UserData.write('name', userList['name'])
+                            ,
+                            UserData.write('email', userList['email']),
+                            UserData.write('phone', userList['phone']),
+                            UserData.write('Wallet', userList['Wallet']),
+                            UserData.write('ID', userList['ID']),
+                            UserData.write('authen', 'true'),
+                            UserData.write('Wallet', userList['Wallet']),
+                            }:(
+                            UserData.write('name',Signupname),
+                            UserData.write('email', Signupemail),
+                            UserData.write('phone', Signupphone),
+                            );
+
                               print(UserData.read('ID'));
+                              print(UserData.read('name'));
                               print(UserData.read('authen'));
                               UserData.write(
                                   'total_order', userList['total_order']);
