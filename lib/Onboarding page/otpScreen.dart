@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:cleaneo_user/FinalDataSet.dart';
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Map/enableLocation.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
@@ -189,8 +190,7 @@ class _OTPPageState extends State<OTPPage> {
                         ),
                         SizedBox(height: mQuery.size.height * 0.006),
                         Text(
-                          "Sent to " +
-                              (auth == 'login' ? Loginphone : Signupphone),
+                          "Sent to " + FinalPhoneNumber,
                           style: TextStyle(
                               fontSize: mQuery.size.height * 0.018,
                               fontFamily: 'SatoshiRegular',
@@ -271,21 +271,26 @@ class _OTPPageState extends State<OTPPage> {
                               print("same");
                               print(auth);
                               print(userList['name']);
-                              auth == 'login' ? {
-                              print(auth),
-                              UserData.write('name', userList['name'])
-                            ,
-                            UserData.write('email', userList['email']),
-                            UserData.write('phone', userList['phone']),
-                            UserData.write('Wallet', userList['Wallet']),
-                            UserData.write('ID', userList['ID']),
-                            UserData.write('authen', 'true'),
-                            UserData.write('Wallet', userList['Wallet']),
-                            }:(
-                            UserData.write('name',Signupname),
-                            UserData.write('email', Signupemail),
-                            UserData.write('phone', Signupphone),
-                            );
+                              auth == 'login'
+                                  ? {
+                                      print(auth),
+                                      UserData.write('name', userList['name']),
+                                      UserData.write(
+                                          'email', userList['email']),
+                                      UserData.write(
+                                          'phone', userList['phone']),
+                                      UserData.write(
+                                          'Wallet', userList['Wallet']),
+                                      UserData.write('ID', userList['ID']),
+                                      UserData.write('authen', 'true'),
+                                      UserData.write(
+                                          'Wallet', userList['Wallet']),
+                                    }
+                                  : (
+                                      UserData.write('name', Signupname),
+                                      UserData.write('email', Signupemail),
+                                      UserData.write('phone', Signupphone),
+                                    );
 
                               print(UserData.read('ID'));
                               print(UserData.read('name'));

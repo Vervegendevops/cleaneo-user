@@ -156,7 +156,7 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
                 press: () {
                   Caddress = placePredictions[index].description!;
                   PlaceID = placePredictions[index].placeId.toString();
-                  print(PlaceID);
+                  print(Caddress);
                   getLatLong();
 
                   // Navigator.push(

@@ -866,6 +866,8 @@ class _AddAddresssState extends State<AddAddresss> {
       'Caddress': Caddress,
       'Type': Type,
       'HTReach': HTReach,
+      'Latitude': ALatitude,
+      'Longitude': ALongitude
     };
 
     // Convert the request body to JSON format
@@ -900,7 +902,7 @@ class _AddAddresssState extends State<AddAddresss> {
 
   Future<Object> fetchAddress() async {
     final url =
-        'https://drycleaneo.com/CleaneoUser/api/showAddress/CleaneoUser000012';
+        'https://drycleaneo.com/CleaneoUser/api/showAddress/${UserData.read('ID')}';
 
     final response = await http.get(Uri.parse(url));
 
@@ -1201,7 +1203,7 @@ class _AddAddresssState extends State<AddAddresss> {
                       //   return AddressPage();
                       // }));
                       saveAddress();
-                      print(UserID);
+                      print('${UserData.read('ID')}');
                       print(Floor);
                       // Navigator.pop(context);
                     },

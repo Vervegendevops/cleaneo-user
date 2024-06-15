@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:cleaneo_user/FinalDataSet.dart';
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Onboarding%20page/login.dart';
 import 'package:cleaneo_user/Onboarding%20page/otpScreen.dart';
@@ -64,7 +65,6 @@ class _SignUpPageState extends State<SignUpPage> {
         } else {
           setState(() {
             ispressed = false;
-
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -259,7 +259,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               onSubmitted: (value) {
                                 setState(() {
                                   Signupname = value;
-
                                 });
                               },
                               onEditingComplete: () {
@@ -361,6 +360,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     onSubmitted: (value) {
                                       setState(() {
                                         Signupphone = value;
+                                        FinalPhoneNumber = value;
                                       });
                                     },
                                     onEditingComplete: () {
@@ -764,10 +764,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                     setState(() {
                                       ispressed = true;
                                     });
-                                    if (Signupphone.length == 10 &&
+                                    if (FinalPhoneNumber.length == 10 &&
                                         Signupemail.length > 0 &&
                                         Signupname.length > 0) {
-                                      fetchResponse(Signupphone);
+                                      fetchResponse(FinalPhoneNumber);
                                       // Navigator.push(context,
                                       //     MaterialPageRoute(builder: (context) {
                                       //   return OTPPage();

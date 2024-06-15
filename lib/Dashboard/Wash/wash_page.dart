@@ -146,8 +146,6 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
     });
     lengthOfCart = 0;
     fetchServices(widget.id);
-    _tabController =
-        TabController(length: selectedService == 'Wash' ? 2 : 1, vsync: this);
   }
 
   _saveAddress(String address) async {
@@ -214,6 +212,12 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                 }
 
                 print(serviceList2);
+                _tabController = TabController(
+                    length: (selectedService == 'Wash' &&
+                            data['laundry_on_kg'] != '[]')
+                        ? 2
+                        : 1,
+                    vsync: this);
               });
               length = keysList.length;
             }
@@ -301,7 +305,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                               controller: _tabController,
                               tabs: [
                                 Tab(text: "Quantity Wise"),
-                                if (selectedService == 'Wash')
+                                if (selectedService == 'Wash' &&
+                                    data['laundry_on_kg'] != '[]')
                                   Tab(text: "By Weight")
                               ],
                               labelColor: Color(0xff29b2fe),
@@ -344,7 +349,9 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
 
                                   // Dry Clean
                                 ),
-                                if (selectedService == 'Wash') ByWeightPage()
+                                if (selectedService == 'Wash' &&
+                                    data['laundry_on_kg'] != '[]')
+                                  ByWeightPage()
                               ],
                             ),
                           ),
@@ -382,7 +389,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                   mQuery.size.height * 0.0195,
                                               color: Colors.white,
                                             )),
-                                        Text("₹ $FinalTotalCost plus taxes",
+                                        Text(
+                                            "₹ $FinalTotalCost inclusive of all taxes",
                                             style: TextStyle(
                                                 fontFamily: 'SatoshiMedium',
                                                 fontSize:
@@ -1020,7 +1028,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                                     mQuery.size.height * 0.0195,
                                                 color: Colors.white,
                                               )),
-                                          Text("₹ $FinalTotalCost plus taxes",
+                                          Text(
+                                              "₹ $FinalTotalCost inclusive of taxes",
                                               style: TextStyle(
                                                   fontFamily: 'SatoshiMedium',
                                                   fontSize: mQuery.size.height *

@@ -477,7 +477,7 @@ class _AddAddressState extends State<AddAddress> {
 
   Future<Object> fetchAddress() async {
     final url =
-        'https://drycleaneo.com/CleaneoUser/api/showAddress/CleaneoUser000012';
+        'https://drycleaneo.com/CleaneoUser/api/showAddress/${UserData.read('ID')}';
 
     final response = await http.get(Uri.parse(url));
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:cleaneo_user/FinalDataSet.dart';
 import 'package:cleaneo_user/Global/global.dart';
 import 'package:cleaneo_user/Onboarding%20page/otpScreen.dart';
 import 'package:cleaneo_user/Onboarding%20page/welcome.dart';
@@ -299,6 +300,7 @@ class _LoginPageState extends State<LoginPage> {
                                     onSubmitted: (value) {
                                       setState(() {
                                         Loginphone = value;
+                                        FinalPhoneNumber = value;
                                       });
                                     },
                                     inputFormatters: <TextInputFormatter>[
@@ -662,12 +664,13 @@ class _LoginPageState extends State<LoginPage> {
                                     print(tnss);
                                   }
                                 : () {
-                                    auth = 'Login';
+                                    auth = 'login';
                                     setState(() {
                                       ispressed = true;
                                     });
-                                    if (Loginphone.length == 10) {
-                                      fetchResponse(Loginphone);
+                                    if (Loginphone.length == 10 &&
+                                        FinalPhoneNumber.length == 10) {
+                                      fetchResponse(FinalPhoneNumber);
                                     } else {
                                       setState(() {
                                         ispressed = false;

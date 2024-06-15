@@ -118,6 +118,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       children: [
                         GestureDetector(
                           onTap: () {
+                            auth = 'Signup';
                             HapticFeedback
                                 .heavyImpact(); // Heavy haptic feedback
                             Navigator.push(context,
@@ -148,6 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                         GestureDetector(
                           onTap: () {
+                            auth = 'login';
                             HapticFeedback
                                 .heavyImpact(); // Heavy haptic feedback
                             Navigator.push(context,

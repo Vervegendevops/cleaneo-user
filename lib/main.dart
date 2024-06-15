@@ -6,9 +6,14 @@ import 'package:get_storage/get_storage.dart';
 
 final UserData = GetStorage();
 Future<void> main() async {
-  // await GetStorage.init();
+  await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  // runApp(MyApp());
+  runApp(DevicePreview(
+    builder: (context) {
+      return MyApp();
+    },
+  ));
 }
 
 class MyApp extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
@@ -90,10 +91,9 @@ class PreviousOrdersPage extends StatelessWidget {
                       BoxShadow(
                         color:
                             Colors.grey.withOpacity(0.5), // color of the shadow
-                        spreadRadius: 2, // spread radius
+                        spreadRadius: 0, // spread radius
                         blurRadius: 5, // blur radius
-                        offset:
-                            const Offset(0, 2), // changes position of shadow
+                        offset: Offset(0, 0), // changes position of shadow
                       ),
                     ],
                   ),
@@ -228,13 +228,13 @@ class PreviousOrdersPage extends StatelessWidget {
     List<Map<String, dynamic>> items = parseItems(order['Items']);
     var mQuery = MediaQuery.of(context);
     showModalBottomSheet(
+      backgroundColor: Colors.white,
       context: context,
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: Container(
-            height: 900,
             width: double.infinity,
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -251,16 +251,15 @@ class PreviousOrdersPage extends StatelessWidget {
                   padding: EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    // border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
                         color:
                             Colors.grey.withOpacity(0.5), // color of the shadow
-                        spreadRadius: 2, // spread radius
+                        spreadRadius: 0, // spread radius
                         blurRadius: 5, // blur radius
                         offset:
-                            const Offset(0, 2), // changes position of shadow
+                            const Offset(0, 0), // changes position of shadow
                       ),
                     ],
                   ),
@@ -270,50 +269,114 @@ class PreviousOrdersPage extends StatelessWidget {
                       Text(
                         'Order ID: ${order['OrderID']}',
                         style: TextStyle(
-                            fontSize: 16.0, fontFamily: 'SatoshiMedium'),
+                            color: Colors.black, fontFamily: 'SatoshiMedium'),
                       ),
                       Text(
                         'Pickup Date: ${order['PickupDate']}',
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: 'SatoshiMedium'),
                       ),
                       Text(
                         'Delivery Date: ${order['DeliveryDate']}',
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: 'SatoshiMedium'),
                       ),
                       Text(
                         'Delivery Time: ${order['DeliveryTime']}',
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: 'SatoshiMedium'),
                       ),
                     ],
                   ),
                 ),
-
                 SizedBox(height: 16.0),
-                Text(
-                  'Items:',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Colors.grey.withOpacity(0.5), // color of the shadow
+                        spreadRadius: 0, // spread radius
+                        blurRadius: 5, // blur radius
+                        offset:
+                            const Offset(0, 0), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Items:',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontFamily: 'SatoshiBold',
+                        ),
+                      ),
+                      // Display list of items
+                      SizedBox(height: 8.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: items.map((item) {
+                          final int quantity =
+                              int.parse(item['quantity'].toString());
+                          final double price =
+                              double.parse(item['price'].toString());
+                          final double totalPrice = quantity * price;
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '• ${item['name']}: ${item['quantity']} x ₹${item['price']}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SatoshiMedium'),
+                              ),
+                              Text(
+                                "₹${totalPrice}",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SatoshiMedium'),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
                 ),
-                // Display list of items
-                SizedBox(height: 8.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: items.map((item) {
-                    return Text(
-                      '- ${item['name']}: ${item['quantity']} x ₹${item['price']}',
-                      style: TextStyle(fontSize: 16.0),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Close'),
-                ),
+                SizedBox(height: mQuery.size.height * 0.032),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: mQuery.size.width * 0.7,
+                        height: mQuery.size.height * 0.05,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey)),
+                        child: Center(
+                          child: Text(
+                            "Close",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontFamily: 'SatoshiBold'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
