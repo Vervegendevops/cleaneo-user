@@ -145,295 +145,340 @@ class _ChooseVendorPageState extends State<ChooseVendorPage> {
                     left: mQuery.size.width * 0.045,
                     right: mQuery.size.width * 0.045,
                   ),
-                  child: ListView.builder(
-                    itemCount: vendorList.length + 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == 0) {
-                        return Container();
-                      }
-                      var vendor = vendorList[index - 1];
-                      String temp = vendor['selectedService'];
-                      temp = temp.substring(1, temp.length - 1);
+                  child: vendorList.isEmpty
+                      ? Center(
+                          child: Text(
+                            "No vendors available",
+                            style: TextStyle(
+                              fontSize: mQuery.size.height * 0.02,
+                              color: Colors.black54,
+                              fontFamily: 'SatoshiBold',
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: vendorList.length + 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index == 0) {
+                              return Container();
+                            }
+                            var vendor = vendorList[index - 1];
+                            String temp = vendor['selectedService'];
+                            temp = temp.substring(1, temp.length - 1);
 
-                      // Split the string by comma and trim each substring
-                      List<String> items =
-                          temp.split(',').map((item) => item.trim()).toList();
-                      int Lengthh = items.length;
-                      return Container(
-                        margin:
-                            EdgeInsets.only(bottom: mQuery.size.height * 0.036),
-                        width: double.infinity,
-                        height: mQuery.size.height * 0.24,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 0,
-                              blurRadius: 7,
-                              offset: Offset(0, 0),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              color: Color(0xffe9f8ff),
+                            // Split the string by comma and trim each substring
+                            List<String> items = temp
+                                .split(',')
+                                .map((item) => item.trim())
+                                .toList();
+                            int Lengthh = items.length;
+                            return Container(
+                              margin: EdgeInsets.only(
+                                  bottom: mQuery.size.height * 0.036),
                               width: double.infinity,
-                              height: mQuery.size.height * 0.06,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: mQuery.size.width * 0.032,
+                              height: mQuery.size.height * 0.24,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(6),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 0,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 0),
+                                  )
+                                ],
                               ),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    width: mQuery.size.width * 0.095,
-                                    height: mQuery.size.height * 0.095,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                          SI1 == false
-                                              ? "https://drycleaneo.com/CleaneoVendor/storage/images/${vendor['ID']}/storepicture/3.jpg"
-                                              : "https://drycleaneo.com/CleaneoVendor/storage/images/${vendor['ID']}/storepicture/3.png",
+                                    color: Color(0xffe9f8ff),
+                                    width: double.infinity,
+                                    height: mQuery.size.height * 0.06,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: mQuery.size.width * 0.032,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: mQuery.size.width * 0.095,
+                                          height: mQuery.size.height * 0.095,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(
+                                                SI1 == false
+                                                    ? "https://drycleaneo.com/CleaneoVendor/storage/images/${vendor['ID']}/storepicture/3.jpg"
+                                                    : "https://drycleaneo.com/CleaneoVendor/storage/images/${vendor['ID']}/storepicture/3.png",
+                                              ),
+                                              onError: (exception, stackTrace) {
+                                                // If loading imageUrl1 fails, fallback to imageUrl2
+                                                setState(() {
+                                                  SI1 = true;
+                                                });
+                                              },
+                                            ),
+                                          ),
                                         ),
-                                        onError: (exception, stackTrace) {
-                                          // If loading imageUrl1 fails, fallback to imageUrl2
-                                          setState(() {
-                                            SI1 = true;
-                                          });
-                                        },
-                                      ),
+                                        SizedBox(
+                                            width: mQuery.size.width * 0.02),
+                                        Text(
+                                          vendor['store_name'],
+                                          style: TextStyle(
+                                            fontSize:
+                                                mQuery.size.height * 0.016,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        Expanded(child: SizedBox()),
+                                        vendor['rating'] == null
+                                            ? Container()
+                                            : Icon(
+                                                Icons.star,
+                                                size: mQuery.size.width * 0.047,
+                                                color: Color(0xff29b2fe),
+                                              ),
+                                        SizedBox(
+                                            width: mQuery.size.width * 0.01),
+                                        vendor['rating'] == null
+                                            ? Container()
+                                            : Text(
+                                                vendor['rating'].toString(),
+                                                style: TextStyle(
+                                                    fontFamily: 'SatoshiBold'),
+                                              )
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(width: mQuery.size.width * 0.02),
-                                  Text(
-                                    vendor['store_name'],
-                                    style: TextStyle(
-                                      fontSize: mQuery.size.height * 0.016,
-                                      fontWeight: FontWeight.w700,
+                                  SizedBox(height: mQuery.size.height * 0.01),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: mQuery.size.width * 0.032,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Services",
+                                              style: TextStyle(
+                                                fontSize:
+                                                    mQuery.size.height * 0.0172,
+                                                fontFamily: 'SatoshiMedium',
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height:
+                                                  mQuery.size.height * 0.004,
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Lengthh >= 1
+                                                        ? items[0] != null
+                                                            ? items[0]
+                                                            : ''
+                                                        : '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SatoshiRegular',
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.014),
+                                                  ),
+                                                  Text(
+                                                    Lengthh >= 2
+                                                        ? items[1] != null
+                                                            ? items[1]
+                                                            : ''
+                                                        : '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SatoshiRegular',
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.014),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Lengthh >= 3
+                                                        ? items[2] != null
+                                                            ? items[2]
+                                                            : ''
+                                                        : '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SatoshiRegular',
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.014),
+                                                  ),
+                                                  Text(
+                                                    Lengthh >= 4
+                                                        ? items[3] != null
+                                                            ? items[3]
+                                                            : ''
+                                                        : '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SatoshiRegular',
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.014),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Lengthh >= 5
+                                                        ? items[4] != null
+                                                            ? items[4]
+                                                            : ''
+                                                        : '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SatoshiRegular',
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.014),
+                                                  ),
+                                                  Text(
+                                                    Lengthh == 6
+                                                        ? items[5] != null
+                                                            ? items[5]
+                                                            : ''
+                                                        : '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'SatoshiRegular',
+                                                        fontSize:
+                                                            mQuery.size.height *
+                                                                0.014),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Expanded(child: SizedBox()),
+                                      ],
                                     ),
                                   ),
                                   Expanded(child: SizedBox()),
-                                  vendor['rating'] == null
-                                      ? Container()
-                                      : Icon(
-                                          Icons.star,
-                                          size: mQuery.size.width * 0.047,
-                                          color: Color(0xff29b2fe),
-                                        ),
-                                  SizedBox(width: mQuery.size.width * 0.01),
-                                  vendor['rating'] == null
-                                      ? Container()
-                                      : Text(
-                                          vendor['rating'].toString(),
-                                          style: TextStyle(
-                                              fontFamily: 'SatoshiBold'),
-                                        )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: mQuery.size.height * 0.01),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: mQuery.size.width * 0.032,
-                              ),
-                              child: Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Row(
                                     children: [
-                                      Text(
-                                        "Services",
-                                        style: TextStyle(
-                                          fontSize: mQuery.size.height * 0.0172,
-                                          fontFamily: 'SatoshiMedium',
-                                          color: Colors.black54,
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return VendorDetailsPage(
+                                                vendorID: vendor['ID'],
+                                              );
+                                            }));
+                                          },
+                                          child: Container(
+                                            height: mQuery.size.height * 0.045,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(6)),
+                                                color: Color(0xff004c90)),
+                                            child: Center(
+                                              child: Text(
+                                                "View Details",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        mQuery.size.height *
+                                                            0.018,
+                                                    fontFamily: 'SatoshiBold'),
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: mQuery.size.height * 0.004,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              Lengthh >= 1
-                                                  ? items[0] != null
-                                                      ? items[0]
-                                                      : ''
-                                                  : '',
-                                              style: TextStyle(
-                                                  fontFamily: 'SatoshiRegular',
-                                                  fontSize: mQuery.size.height *
-                                                      0.014),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return WashPage(
+                                                id: vendor['ID'],
+                                                vendorAddress:
+                                                    vendor['address'],
+                                                vendorLatitude:
+                                                    vendor['Latitude'],
+                                                vendorLongitude:
+                                                    vendor['Longitude'],
+                                              );
+                                            }));
+                                          },
+                                          child: Container(
+                                            height: mQuery.size.height * 0.045,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    bottomRight:
+                                                        Radius.circular(6)),
+                                                color: Color(0xff29b2fe)),
+                                            child: Center(
+                                              child: Text(
+                                                "Proceed",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        mQuery.size.height *
+                                                            0.018,
+                                                    fontFamily: 'SatoshiBold'),
+                                              ),
                                             ),
-                                            Text(
-                                              Lengthh >= 2
-                                                  ? items[1] != null
-                                                      ? items[1]
-                                                      : ''
-                                                  : '',
-                                              style: TextStyle(
-                                                  fontFamily: 'SatoshiRegular',
-                                                  fontSize: mQuery.size.height *
-                                                      0.014),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              Lengthh >= 3
-                                                  ? items[2] != null
-                                                      ? items[2]
-                                                      : ''
-                                                  : '',
-                                              style: TextStyle(
-                                                  fontFamily: 'SatoshiRegular',
-                                                  fontSize: mQuery.size.height *
-                                                      0.014),
-                                            ),
-                                            Text(
-                                              Lengthh >= 4
-                                                  ? items[3] != null
-                                                      ? items[3]
-                                                      : ''
-                                                  : '',
-                                              style: TextStyle(
-                                                  fontFamily: 'SatoshiRegular',
-                                                  fontSize: mQuery.size.height *
-                                                      0.014),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              Lengthh >= 5
-                                                  ? items[4] != null
-                                                      ? items[4]
-                                                      : ''
-                                                  : '',
-                                              style: TextStyle(
-                                                  fontFamily: 'SatoshiRegular',
-                                                  fontSize: mQuery.size.height *
-                                                      0.014),
-                                            ),
-                                            Text(
-                                              Lengthh == 6
-                                                  ? items[5] != null
-                                                      ? items[5]
-                                                      : ''
-                                                  : '',
-                                              style: TextStyle(
-                                                  fontFamily: 'SatoshiRegular',
-                                                  fontSize: mQuery.size.height *
-                                                      0.014),
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  Expanded(child: SizedBox()),
                                 ],
                               ),
-                            ),
-                            Expanded(child: SizedBox()),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return VendorDetailsPage(
-                                          vendorID: vendor['ID'],
-                                        );
-                                      }));
-                                    },
-                                    child: Container(
-                                      height: mQuery.size.height * 0.045,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(6)),
-                                          color: Color(0xff004c90)),
-                                      child: Center(
-                                        child: Text(
-                                          "View Details",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                                  mQuery.size.height * 0.018,
-                                              fontFamily: 'SatoshiBold'),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return WashPage(
-                                          id: vendor['ID'],
-                                          vendorAddress: vendor['address'],
-                                          vendorLatitude: vendor['Latitude'],
-                                          vendorLongitude: vendor['Longitude'],
-                                        );
-                                      }));
-                                    },
-                                    child: Container(
-                                      height: mQuery.size.height * 0.045,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                              bottomRight: Radius.circular(6)),
-                                          color: Color(0xff29b2fe)),
-                                      child: Center(
-                                        child: Text(
-                                          "Proceed",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                                  mQuery.size.height * 0.018,
-                                              fontFamily: 'SatoshiBold'),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ),
             )

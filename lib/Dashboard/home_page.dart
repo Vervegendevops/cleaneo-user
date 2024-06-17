@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cleaneo_user/Dashboard/Address/address_page.dart';
 import 'package:cleaneo_user/Dashboard/Notifications/notification_page.dart';
@@ -31,6 +30,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> bannerAds = [];
+
+  int orderCount = 0;
+
+  Future<void> fetchOrderCount() async {
+    final url =
+        'https://drycleaneo.com/CleaneoUser/api/user-orders/${UserData.read('ID')}';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List orders = json.decode(response.body);
+        setState(() {
+          orderCount = orders.length;
+        });
+      } else {
+        throw Exception('Failed to load orders');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future<List<Map<String, dynamic>>> fetchBannerAds() async {
     final String apiUrl = 'https://drycleaneo.com/CleaneoUser/api/allBannerAd/';
@@ -209,6 +228,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     fetchAddress();
+    fetchOrderCount();
     // fetchUserOrders('CleaneoUser000012');
   }
 
@@ -339,7 +359,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "$orderNo",
+                                      "$orderCount",
                                       style: TextStyle(
                                           color: Color(0xff29b2fe),
                                           fontSize: mQuery.size.height * 0.015,
@@ -541,7 +561,9 @@ class _HomePageState extends State<HomePage> {
                     future: fetchBannerAds(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(); // Show a loading indicator while fetching data
+                        return LinearProgressIndicator(
+                          color: Color(0xff29b2fe),
+                        ); // Show a loading indicator while fetching data
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {

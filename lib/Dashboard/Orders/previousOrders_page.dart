@@ -65,6 +65,18 @@ class PreviousOrdersPage extends StatelessWidget {
         } else {
           // Data loaded successfully
           List<Map<String, dynamic>> orders = snapshot.data!;
+          // Check if the orders list is empty
+          if (orders.isEmpty) {
+            return const Center(
+              child: Text(
+                'No previous orders available',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'SatoshiBold',
+                    color: Colors.black54),
+              ),
+            );
+          }
           // Build your UI using the fetched data
           return SingleChildScrollView(
             child: Column(
