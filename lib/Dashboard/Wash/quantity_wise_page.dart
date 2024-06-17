@@ -140,6 +140,10 @@ class _QuantityWisePageState extends State<QuantityWisePage> {
   String formattedDayAfterTomorrow =
       DateFormat('d MMMM').format(DateTime.now().add(Duration(days: 2)));
 
+  void DeliverySlot() {
+    print("Seleceted Date : $selectedDateIndex");
+  }
+
   @override
   Widget build(BuildContext context) {
     if (currentHour >= 18 && currentHour < 20) {
@@ -562,11 +566,6 @@ class _QuantityWisePageState extends State<QuantityWisePage> {
         List<String> dates2 = ["26 June", "28 June", "29 June"];
         List<String> times2 = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
-        int? selectedDateIndex; // Track the selected date index
-        int? selectedTimeIndex;
-        int? selectedDateIndex2; // Track the selected date index for delivery
-        int? selectedTimeIndex2;
-
         bool showSecondDropdown =
             false; // Variable to control second dropdown visibility
 
@@ -697,7 +696,9 @@ class _QuantityWisePageState extends State<QuantityWisePage> {
                                     for (int i = 0; i < times.length; i++)
                                       GestureDetector(
                                         onTap: () {
+                                          DeliverySlot();
                                           setState(() {
+                                            print('setstate');
                                             selectedTimeIndex = i;
                                           });
                                         },

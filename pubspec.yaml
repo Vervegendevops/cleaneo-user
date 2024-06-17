@@ -50,6 +50,7 @@ dependencies:
   razorpay_flutter: ^1.2.6
   lottie: ^3.1.0
   gif_view: ^0.4.3
+  order_tracker: ^0.0.2
 
 
 dev_dependencies:

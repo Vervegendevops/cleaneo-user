@@ -355,6 +355,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     onChanged: (value) {
                                       setState(() {
                                         Signupphone = value;
+                                        FinalPhoneNumber = value;
                                       });
                                     },
                                     onSubmitted: (value) {
@@ -758,7 +759,19 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           GestureDetector(
                             onTap: tns == false
-                                ? null
+                                ? () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Please check the Terms of Service.'),
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        margin: EdgeInsets.all(16.0),
+                                      ),
+                                    );
+                                  }
                                 : () {
                                     auth = 'Signup';
                                     setState(() {

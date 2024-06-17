@@ -153,6 +153,29 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
     await prefs.setString('enteredAddress', address); // Save entered address
   }
 
+  int? selectedDateIndex; // Track the selected date index
+  int? selectedTimeIndex;
+  int? selectedDateIndex2; // Track the selected date index for delivery
+  int? selectedTimeIndex2;
+  List<String> dates2 = [];
+  void DeliverySlot() {
+    print("Seleceted Date : $selectedDateIndex");
+    setState(() {
+      DformattedToday = DateFormat('d MMMM')
+          .format(DateTime.now().add(Duration(days: 3 + selectedDateIndex!)));
+      print('DformattedToday : $DformattedToday');
+      DformattedTomorrow = DateFormat('d MMMM')
+          .format(DateTime.now().add(Duration(days: 4 + selectedDateIndex!)));
+      DformattedDayAfterTomorrow = DateFormat('d MMMM')
+          .format(DateTime.now().add(Duration(days: 5 + selectedDateIndex!)));
+      dates2 = [
+        DformattedToday,
+        DformattedTomorrow,
+        DformattedDayAfterTomorrow
+      ];
+    });
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -563,17 +586,8 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
         List<String> times = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
         // List<String> dates2 = ["26 June", "28 June", "29 June"];
-        List<String> dates2 = [
-          DformattedToday,
-          DformattedTomorrow,
-          DformattedDayAfterTomorrow
-        ];
-        List<String> times2 = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
-        int? selectedDateIndex; // Track the selected date index
-        int? selectedTimeIndex;
-        int? selectedDateIndex2; // Track the selected date index for delivery
-        int? selectedTimeIndex2;
+        List<String> times2 = ["10am - 12pm", "02pm - 04pm", "06pm - 08pm"];
 
         bool showSecondDropdown =
             false; // Variable to control second dropdown visibility
@@ -655,6 +669,7 @@ class _WashPageState extends State<WashPage> with TickerProviderStateMixin {
                                             selectedDateIndex = i;
                                             PickupDate = dates[i];
                                             print(PickupDate);
+                                            DeliverySlot();
                                           });
                                         },
                                         child: Container(

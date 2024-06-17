@@ -294,6 +294,7 @@ class _LoginPageState extends State<LoginPage> {
                                     onChanged: (value) {
                                       setState(() {
                                         Loginphone = value;
+                                        FinalPhoneNumber = value;
                                         print(Loginphone);
                                       });
                                     },
@@ -661,7 +662,17 @@ class _LoginPageState extends State<LoginPage> {
                           GestureDetector(
                             onTap: tnss == false || Loginphone.length != 10
                                 ? () {
-                                    print(tnss);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Please check the Terms of Service.'),
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        margin: EdgeInsets.all(16.0),
+                                      ),
+                                    );
                                   }
                                 : () {
                                     auth = 'login';
